@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.dto.BookDto;
 import mate.academy.onlinebookstore.dto.BookSearchParametersDto;
 import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
+import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
 import mate.academy.onlinebookstore.exception.EntityNotFoundException;
 import mate.academy.onlinebookstore.mapper.BookMapper;
 import mate.academy.onlinebookstore.model.Book;
@@ -20,6 +21,27 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
 
+    private void updateBook(Book updatedBook, UpdateBookRequestDto updateRequestDto) {
+        if (updateRequestDto.getTitle() != null) {
+            updatedBook.setTitle(updateRequestDto.getTitle());
+        }
+        if (updateRequestDto.getAuthor() != null) {
+            updatedBook.setAuthor(updateRequestDto.getAuthor());
+        }
+        if (updateRequestDto.getIsbn() != null) {
+            updatedBook.setIsbn(updateRequestDto.getIsbn());
+        }
+        if (updateRequestDto.getPrice() != null) {
+            updatedBook.setPrice(updateRequestDto.getPrice());
+        }
+        if (updateRequestDto.getDescription() != null) {
+            updatedBook.setDescription(updateRequestDto.getDescription());
+        }
+        if (updateRequestDto.getCoverImage() != null) {
+            updatedBook.setCoverImage(updateRequestDto.getCoverImage());
+        }
+    }
+
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
         Book book = bookMapper.toModel(requestDto);
@@ -28,9 +50,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto update(Long id, CreateBookRequestDto requestDto) {
-        Book book = bookMapper.toModel(requestDto);
-        return bookMapper.toDto(bookRepository.updateBookById(id));
+    public BookDto update(Long id, UpdateBookRequestDto updateRequestDto) {
+        Book updatedBook = bookRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Can't find a updatedBook by id: " + id));
+        updateBook(updatedBook, updateRequestDto);
+        return bookMapper.toDto(bookRepository.save(updatedBook));
     }
 
     @Override
