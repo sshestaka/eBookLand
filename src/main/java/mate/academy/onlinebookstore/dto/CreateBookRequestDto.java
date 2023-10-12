@@ -9,7 +9,6 @@ import mate.academy.onlinebookstore.validation.IsBigDecimal;
 
 @Data
 public class CreateBookRequestDto {
-    //private Long id;
     @NotNull
     private String title;
     @NotNull
