@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books
+      author: Sergey Shestaka
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column: {name: title, value: "Treasure Island"}
+              - column: {name: author, value: "Robert Louis Stevenson"}
+              - column: {name: isbn, value: "ISBN_001"}
+              - column: {name: price, value: 199.00}
+              - column: {name: description, value: "Treasure Island is an adventure novel by Scottish author Robert Louis Stevenson."}
+              - column: {name: cover_image, value: "coverImage_001"}
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Clean Code" }
+              - column: { name: author, value: "Robert C. Martin" }
+              - column: { name: isbn, value: "ISBN_002" }
+              - column: { name: price, value: 1199.00 }
+              - column: { name: description, value: "A Handbook of Agile Software Craftsmanship" }
+              - column: { name: cover_image, value: "coverImage_002" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Big Fish" }
+              - column: { name: author, value: "Daniel Wallace" }
+              - column: { name: isbn, value: "ISBN_003" }
+              - column: { name: price, value: 444.00 }
+              - column: { name: description, value: "A Novel of Mythic Proportions" }
+              - column: { name: cover_image, value: "coverImage_003" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Harry Potter and the Philosopher's Stone" }
+              - column: { name: author, value: "Rowling J.K." }
+              - column: { name: isbn, value: "ISBN_004" }
+              - column: { name: price, value: 860.00 }
+              - column: { name: description, value: "An incredible adventure is about to begin!" }
+              - column: { name: cover_image, value: "coverImage_004" }
