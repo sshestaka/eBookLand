@@ -1,4 +1,4 @@
-package mate.academy.onlinebookstore.repository.book;
+package mate.academy.onlinebookstore.repository;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -6,14 +6,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mate.academy.onlinebookstore.dto.book.BookDto;
-import mate.academy.onlinebookstore.dto.book.BookSearchParametersDto;
-import mate.academy.onlinebookstore.dto.book.CreateBookRequestDto;
-import mate.academy.onlinebookstore.dto.book.UpdateBookRequestDto;
+import mate.academy.onlinebookstore.dto.BookDto;
+import mate.academy.onlinebookstore.dto.BookSearchParametersDto;
+import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
+import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
 import mate.academy.onlinebookstore.service.BookService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Book management", description = "Endpoints for managing books")
 @RestController
-@OpenAPIDefinition
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/books")
-@Tag(name = "Book management", description = "Endpoints for managing books")
+@OpenAPIDefinition
 public class BookController {
     private final BookService bookService;
 
@@ -51,7 +50,6 @@ public class BookController {
         return bookService.searchBooks(searchParameters, pageable);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a book by id", description = "Delete a book by id")
@@ -59,7 +57,6 @@ public class BookController {
         bookService.deleteById(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     @Operation(summary = "Update a book by id", description =
             "Update a book by id according to the parameters")
@@ -68,7 +65,6 @@ public class BookController {
         return bookService.update(id, updateRequestDto);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(summary = "Create a new book", description = "Create a new book")
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto requestDto) {

@@ -1,4 +1,4 @@
-package mate.academy.onlinebookstore.dto.book;
+package mate.academy.onlinebookstore.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;

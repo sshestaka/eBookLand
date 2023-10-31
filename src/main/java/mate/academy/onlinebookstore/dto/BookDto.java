@@ -1,4 +1,4 @@
-package mate.academy.onlinebookstore.dto.book;
+package mate.academy.onlinebookstore.dto;
 
 import java.math.BigDecimal;
 import lombok.Data;

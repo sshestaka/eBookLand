@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,30 +44,6 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("timestamp", LocalDateTime.now());
         body.put("status", statusCode);
         body.put("errors", noSuchElementException.getMessage());
-        HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<>(body, headers, statusCode);
-    }
-
-    @ExceptionHandler(value = {RegistrationException.class })
-    protected ResponseEntity<Object> registrationException(RuntimeException exc) {
-        RegistrationException registrationException = (RegistrationException) exc;
-        HttpStatusCode statusCode = HttpStatus.NOT_ACCEPTABLE;
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", statusCode);
-        body.put("errors", registrationException.getMessage());
-        HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<>(body, headers, statusCode);
-    }
-
-    @ExceptionHandler(value = {UsernameNotFoundException.class })
-    protected ResponseEntity<Object> usernameNotFoundException(RuntimeException exc) {
-        UsernameNotFoundException usernameNotFoundException = (UsernameNotFoundException) exc;
-        HttpStatusCode statusCode = HttpStatus.NOT_FOUND;
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", statusCode);
-        body.put("errors", usernameNotFoundException.getMessage());
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(body, headers, statusCode);
     }
