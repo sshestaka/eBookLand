@@ -15,6 +15,8 @@ import lombok.Data;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.EqualsExclude;
 import org.apache.commons.lang3.builder.HashCodeExclude;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,7 +44,8 @@ public class User implements UserDetails {
     private String shippingAddress;
     @Column(nullable = false, name = "is_deleted")
     private boolean isDeleted = false;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
+    @Fetch(value = FetchMode.JOIN)
     @EqualsExclude
     @HashCodeExclude
     @ToString.Exclude
