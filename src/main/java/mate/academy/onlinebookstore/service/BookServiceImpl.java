@@ -22,27 +22,6 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
 
-    private void updateBook(Book updatedBook, UpdateBookRequestDto updateRequestDto) {
-        if (updateRequestDto.getTitle() != null) {
-            updatedBook.setTitle(updateRequestDto.getTitle());
-        }
-        if (updateRequestDto.getAuthor() != null) {
-            updatedBook.setAuthor(updateRequestDto.getAuthor());
-        }
-        if (updateRequestDto.getIsbn() != null) {
-            updatedBook.setIsbn(updateRequestDto.getIsbn());
-        }
-        if (updateRequestDto.getPrice() != null) {
-            updatedBook.setPrice(updateRequestDto.getPrice());
-        }
-        if (updateRequestDto.getDescription() != null) {
-            updatedBook.setDescription(updateRequestDto.getDescription());
-        }
-        if (updateRequestDto.getCoverImage() != null) {
-            updatedBook.setCoverImage(updateRequestDto.getCoverImage());
-        }
-    }
-
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
         Book book = bookMapper.toModel(requestDto);
@@ -83,5 +62,26 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    private void updateBook(Book updatedBook, UpdateBookRequestDto updateRequestDto) {
+        if (updateRequestDto.getTitle() != null) {
+            updatedBook.setTitle(updateRequestDto.getTitle());
+        }
+        if (updateRequestDto.getAuthor() != null) {
+            updatedBook.setAuthor(updateRequestDto.getAuthor());
+        }
+        if (updateRequestDto.getIsbn() != null) {
+            updatedBook.setIsbn(updateRequestDto.getIsbn());
+        }
+        if (updateRequestDto.getPrice() != null) {
+            updatedBook.setPrice(updateRequestDto.getPrice());
+        }
+        if (updateRequestDto.getDescription() != null) {
+            updatedBook.setDescription(updateRequestDto.getDescription());
+        }
+        if (updateRequestDto.getCoverImage() != null) {
+            updatedBook.setCoverImage(updateRequestDto.getCoverImage());
+        }
     }
 }

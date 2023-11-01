@@ -26,24 +26,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    private void updatedUser(User updatedUser, UpdateUserRequestDto updateUserRequestDto) {
-        if (updateUserRequestDto.getEmail() != null) {
-            updatedUser.setEmail(updateUserRequestDto.getEmail());
-        }
-        if (updateUserRequestDto.getFirstName() != null) {
-            updatedUser.setFirstName(updateUserRequestDto.getFirstName());
-        }
-        if (updateUserRequestDto.getLastName() != null) {
-            updatedUser.setLastName(updateUserRequestDto.getLastName());
-        }
-        if (updateUserRequestDto.getPassword() != null) {
-            updatedUser.setPassword(updateUserRequestDto.getPassword());
-        }
-        if (updateUserRequestDto.getShippingAddress() != null) {
-            updatedUser.setShippingAddress(updateUserRequestDto.getShippingAddress());
-        }
-    }
-
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request)
             throws RegistrationException {
@@ -87,5 +69,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    private void updatedUser(User updatedUser, UpdateUserRequestDto updateUserRequestDto) {
+        if (updateUserRequestDto.getEmail() != null) {
+            updatedUser.setEmail(updateUserRequestDto.getEmail());
+        }
+        if (updateUserRequestDto.getFirstName() != null) {
+            updatedUser.setFirstName(updateUserRequestDto.getFirstName());
+        }
+        if (updateUserRequestDto.getLastName() != null) {
+            updatedUser.setLastName(updateUserRequestDto.getLastName());
+        }
+        if (updateUserRequestDto.getPassword() != null) {
+            updatedUser.setPassword(updateUserRequestDto.getPassword());
+        }
+        if (updateUserRequestDto.getShippingAddress() != null) {
+            updatedUser.setShippingAddress(updateUserRequestDto.getShippingAddress());
+        }
     }
 }
