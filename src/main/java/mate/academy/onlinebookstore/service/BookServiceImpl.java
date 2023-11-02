@@ -3,14 +3,14 @@ package mate.academy.onlinebookstore.service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import mate.academy.onlinebookstore.dto.BookDto;
-import mate.academy.onlinebookstore.dto.BookSearchParametersDto;
-import mate.academy.onlinebookstore.dto.CreateBookRequestDto;
-import mate.academy.onlinebookstore.dto.UpdateBookRequestDto;
+import mate.academy.onlinebookstore.dto.book.BookDto;
+import mate.academy.onlinebookstore.dto.book.BookSearchParametersDto;
+import mate.academy.onlinebookstore.dto.book.CreateBookRequestDto;
+import mate.academy.onlinebookstore.dto.book.UpdateBookRequestDto;
 import mate.academy.onlinebookstore.mapper.BookMapper;
 import mate.academy.onlinebookstore.model.Book;
-import mate.academy.onlinebookstore.repository.BookRepository;
-import mate.academy.onlinebookstore.repository.BookSpecificationBuilder;
+import mate.academy.onlinebookstore.repository.book.BookRepository;
+import mate.academy.onlinebookstore.repository.book.BookSpecificationBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -21,27 +21,6 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
-
-    private void updateBook(Book updatedBook, UpdateBookRequestDto updateRequestDto) {
-        if (updateRequestDto.getTitle() != null) {
-            updatedBook.setTitle(updateRequestDto.getTitle());
-        }
-        if (updateRequestDto.getAuthor() != null) {
-            updatedBook.setAuthor(updateRequestDto.getAuthor());
-        }
-        if (updateRequestDto.getIsbn() != null) {
-            updatedBook.setIsbn(updateRequestDto.getIsbn());
-        }
-        if (updateRequestDto.getPrice() != null) {
-            updatedBook.setPrice(updateRequestDto.getPrice());
-        }
-        if (updateRequestDto.getDescription() != null) {
-            updatedBook.setDescription(updateRequestDto.getDescription());
-        }
-        if (updateRequestDto.getCoverImage() != null) {
-            updatedBook.setCoverImage(updateRequestDto.getCoverImage());
-        }
-    }
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
@@ -83,5 +62,26 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    private void updateBook(Book updatedBook, UpdateBookRequestDto updateRequestDto) {
+        if (updateRequestDto.getTitle() != null) {
+            updatedBook.setTitle(updateRequestDto.getTitle());
+        }
+        if (updateRequestDto.getAuthor() != null) {
+            updatedBook.setAuthor(updateRequestDto.getAuthor());
+        }
+        if (updateRequestDto.getIsbn() != null) {
+            updatedBook.setIsbn(updateRequestDto.getIsbn());
+        }
+        if (updateRequestDto.getPrice() != null) {
+            updatedBook.setPrice(updateRequestDto.getPrice());
+        }
+        if (updateRequestDto.getDescription() != null) {
+            updatedBook.setDescription(updateRequestDto.getDescription());
+        }
+        if (updateRequestDto.getCoverImage() != null) {
+            updatedBook.setCoverImage(updateRequestDto.getCoverImage());
+        }
     }
 }
