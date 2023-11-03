@@ -12,7 +12,7 @@ import mate.academy.onlinebookstore.exception.RegistrationException;
 import mate.academy.onlinebookstore.mapper.UserMapper;
 import mate.academy.onlinebookstore.model.Role;
 import mate.academy.onlinebookstore.model.User;
-import mate.academy.onlinebookstore.repository.RoleRepository;
+import mate.academy.onlinebookstore.repository.role.RoleRepository;
 import mate.academy.onlinebookstore.repository.user.UserRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
