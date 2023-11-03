@@ -1,0 +1,20 @@
+databaseChangeLog:
+- changeSet:
+    id: insert-categories
+    author: Sergey Shestaka
+    changes:
+      - insert:
+          tableName: categories
+          columns:
+            - column: { name: name, value: "Category-1" }
+            - column: { name: description, value: "Category-1" }
+      - insert:
+          tableName: categories
+          columns:
+            - column: { name: name, value: "Category-2" }
+            - column: { name: description, value: "Category-2" }
+      - insert:
+          tableName: categories
+          columns:
+            - column: { name: name, value: "Category-3" }
+            - column: { name: description, value: "Category-3" }
