@@ -39,3 +39,14 @@ databaseChangeLog:
               - column: { name: price, value: 860.00 }
               - column: { name: description, value: "An incredible adventure is about to begin!" }
               - column: { name: cover_image, value: "coverImage_004" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Inner Game of Tennis" }
+              - column: { name: author, value: "W. Timothy Gallwey" }
+              - column: { name: isbn, value: "ISBN_005" }
+              - column: { name: price, value: 2860.00 }
+              - column: { name: description, value: "The Inner Game of Tennis is a 
+              revolutionary program for overcoming the self-doubt, nervousness, 
+              and lapses of concentration that can keep a player from winning." }
+              - column: { name: cover_image, value: "coverImage_005" }
