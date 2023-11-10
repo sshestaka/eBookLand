@@ -66,11 +66,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             for (CartItem cartItem : cartItemList) {
                 if (cartItem.getBook().getId().equals(bookById.getId())) {
                     cartItem.setQuantity(cartItem.getQuantity() + 1);
+                    Set<CartItem> newCartItemSet = cartItemList.stream()
+                            .collect(Collectors.toSet());
+                    userShoppingCart.setCartItems(newCartItemSet);
+                    return shoppingCartMapper.toDto(userShoppingCart);
                 }
             }
-            Set<CartItem> newCartItemSet = cartItemList.stream().collect(Collectors.toSet());
-            userShoppingCart.setCartItems(newCartItemSet);
-            return shoppingCartMapper.toDto(userShoppingCart);
+            CartItem cartItem = new CartItem();
+            cartItem.setShoppingCart(userShoppingCart);
+            cartItem.setBook(bookMapper.toModelFromBookDto(bookById));
+            cartItem.setQuantity(addBookToShoppingCartDto.getQuantity());
+            cartItemService.save(cartItem);
+            userShoppingCart.getCartItems().add(cartItem);
+            return shoppingCartMapper.toDto(shoppingCartRepository
+                    .save(userShoppingCart));
         }
         //if cartItemList is empty - create new cartItem and add it to shopping cart
         CartItem cartItem = new CartItem();
@@ -79,9 +88,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItem.setQuantity(addBookToShoppingCartDto.getQuantity());
         cartItemService.save(cartItem);
         userShoppingCart.setCartItems(Collections.singleton(cartItem));
-        ShoppingCartDto dto = shoppingCartMapper.toDto(shoppingCartRepository
+        return shoppingCartMapper.toDto(shoppingCartRepository
                 .save(userShoppingCart));
-        return dto;
     }
 
     @Override
