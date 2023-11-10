@@ -14,6 +14,7 @@ import mate.academy.onlinebookstore.model.Role;
 import mate.academy.onlinebookstore.model.User;
 import mate.academy.onlinebookstore.repository.role.RoleRepository;
 import mate.academy.onlinebookstore.repository.user.UserRepository;
+import mate.academy.onlinebookstore.service.shoppingcart.ShoppingCartService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request)
@@ -42,13 +44,14 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Collections.singleton(roleRepository
                 .findByRoleName(Role.RoleName.ROLE_USER)));
         User savedUser = userRepository.save(user);
+        shoppingCartService.save(user);
         return userMapper.toUserResponse(savedUser);
     }
 
     @Override
     public UserDto update(Long id, UpdateUserRequestDto updateUserRequestDto) {
         User updatedUser = userRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Can't find a book by id: " + id));
+                new NoSuchElementException("Can't find a user by id: " + id));
         updatedUser(updatedUser, updateUserRequestDto);
         return userMapper.toDto(userRepository.save(updatedUser));
     }
@@ -68,6 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(Long id) {
+        shoppingCartService.deleteById(id);
         userRepository.deleteById(id);
     }
 

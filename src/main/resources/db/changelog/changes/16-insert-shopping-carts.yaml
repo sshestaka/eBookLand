@@ -1,0 +1,9 @@
+databaseChangeLog:
+- changeSet:
+    id: insert-shopping-carts
+    author: Sergey Shestaka
+    changes:
+      - insert:
+          tableName: shopping_carts
+          columns:
+            - column: { name: id, value: 1 }

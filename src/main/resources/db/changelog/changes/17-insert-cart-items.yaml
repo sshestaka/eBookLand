@@ -1,0 +1,17 @@
+databaseChangeLog:
+- changeSet:
+    id: insert-cart-items
+    author: Sergey Shestaka
+    changes:
+      - insert:
+          tableName: cart_items
+          columns:
+            - column: { name: shopping_cart_id, value: 1 }
+            - column: { name: book_id, value: 1 }
+            - column: { name: quantity, value: 1 }
+      - insert:
+          tableName: cart_items
+          columns:
+            - column: { name: shopping_cart_id, value: 1 }
+            - column: { name: book_id, value: 2}
+            - column: { name: quantity, value: 1 }
