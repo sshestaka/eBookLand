@@ -1,6 +1,6 @@
 package mate.academy.onlinebookstore.service.cartitem;
 
-import java.util.Optional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.dto.cartitem.CartItemDto;
 import mate.academy.onlinebookstore.mapper.CartItemMapper;
@@ -20,8 +20,12 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public Optional<CartItem> findByShoppingCartIdAndBookId(Long shoppingCartId, Long bookId) {
-        return Optional.of(cartItemRepository
-                .findByShoppingCartIdAndBookId(shoppingCartId, bookId));
+    public CartItem findByShoppingCartIdAndBookId(Long shoppingCartId, Long bookId) {
+        return cartItemRepository.findByShoppingCartIdAndBookId(shoppingCartId, bookId);
+    }
+
+    @Override
+    public List<CartItem> findByShoppingCartId(Long shoppingCartId) {
+        return cartItemRepository.findByShoppingCartId(shoppingCartId);
     }
 }

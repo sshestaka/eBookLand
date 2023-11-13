@@ -3,8 +3,7 @@ package mate.academy.onlinebookstore.service.shoppingcart;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.dto.book.AddBookToShoppingCartDto;
 import mate.academy.onlinebookstore.dto.book.BookDto;
@@ -51,45 +50,41 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto addItem(AddBookToShoppingCartDto addBookToShoppingCartDto,
                                    String userEmail) {
-        // get user from userEmail
         User userByEmail = findUserByEmail(userEmail);
-        // get shoppingCart by userId
+
         ShoppingCart userShoppingCart = shoppingCartRepository.findByUserId(userByEmail.getId());
-        //get book by id
+
         BookDto bookById = bookService.findById(addBookToShoppingCartDto.getBookId());
-        //get cartItems and convert them into List for next check
-        List<CartItem> cartItemList = userShoppingCart.getCartItems()
-                .stream()
-                .toList();
-        //if cartItemList isn't empty
-        if (!cartItemList.isEmpty()) {
-            for (CartItem cartItem : cartItemList) {
-                if (cartItem.getBook().getId().equals(bookById.getId())) {
-                    cartItem.setQuantity(cartItem.getQuantity() + 1);
-                    Set<CartItem> newCartItemSet = cartItemList.stream()
-                            .collect(Collectors.toSet());
-                    userShoppingCart.setCartItems(newCartItemSet);
-                    return shoppingCartMapper.toDto(userShoppingCart);
-                }
+
+        List<CartItem> cartItemsSet = cartItemService
+                .findByShoppingCartId(userShoppingCart.getId());
+
+        if (cartItemsSet.size() != 0) {
+
+            Optional<CartItem> first = cartItemsSet.stream()
+                    .filter(cartItem -> cartItem.getBook().getId().equals(bookById.getId()))
+                    .findFirst();
+
+            if (first.isPresent()) {
+                CartItem cartItem = first.get();
+                int quantity = cartItem.getQuantity();
+                cartItem.setQuantity(quantity + addBookToShoppingCartDto.getQuantity());
+                cartItemService.save(cartItem);
+
+                return shoppingCartMapper.toDto(userShoppingCart);
             }
-            CartItem cartItem = new CartItem();
-            cartItem.setShoppingCart(userShoppingCart);
-            cartItem.setBook(bookMapper.toModelFromBookDto(bookById));
-            cartItem.setQuantity(addBookToShoppingCartDto.getQuantity());
-            cartItemService.save(cartItem);
-            userShoppingCart.getCartItems().add(cartItem);
-            return shoppingCartMapper.toDto(shoppingCartRepository
-                    .save(userShoppingCart));
+
         }
-        //if cartItemList is empty - create new cartItem and add it to shopping cart
+
         CartItem cartItem = new CartItem();
         cartItem.setShoppingCart(userShoppingCart);
         cartItem.setBook(bookMapper.toModelFromBookDto(bookById));
         cartItem.setQuantity(addBookToShoppingCartDto.getQuantity());
         cartItemService.save(cartItem);
+
         userShoppingCart.setCartItems(Collections.singleton(cartItem));
-        return shoppingCartMapper.toDto(shoppingCartRepository
-                .save(userShoppingCart));
+
+        return shoppingCartMapper.toDto(userShoppingCart);
     }
 
     @Override
