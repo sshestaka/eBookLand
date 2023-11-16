@@ -1,6 +1,7 @@
 package mate.academy.onlinebookstore.service.cartitem;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import mate.academy.onlinebookstore.dto.cartitem.CartItemDto;
 import mate.academy.onlinebookstore.mapper.CartItemMapper;
@@ -20,12 +21,18 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public CartItem findByShoppingCartIdAndBookId(Long shoppingCartId, Long bookId) {
-        return cartItemRepository.findByShoppingCartIdAndBookId(shoppingCartId, bookId);
+    public CartItem findById(Long id) {
+        return cartItemRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Can't find an item by id: " + id));
     }
 
     @Override
     public List<CartItem> findByShoppingCartId(Long shoppingCartId) {
         return cartItemRepository.findByShoppingCartId(shoppingCartId);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        cartItemRepository.deleteById(id);
     }
 }

@@ -8,7 +8,9 @@ public interface CartItemService {
 
     CartItemDto save(CartItem cartItem);
 
-    CartItem findByShoppingCartIdAndBookId(Long shoppingCartId, Long bookId);
+    CartItem findById(Long id);
 
     List<CartItem> findByShoppingCartId(Long shoppingCartId);
+
+    void deleteById(Long id);
 }
