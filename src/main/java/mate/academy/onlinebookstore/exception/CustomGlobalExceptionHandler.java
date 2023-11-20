@@ -73,6 +73,19 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, headers, statusCode);
     }
 
+    @ExceptionHandler(value = {UnsupportedOperationException.class })
+    protected ResponseEntity<Object> unsupportedOperationException(RuntimeException exc) {
+        UnsupportedOperationException unsupportedOperationException =
+                (UnsupportedOperationException) exc;
+        HttpStatusCode statusCode = HttpStatus.NOT_ACCEPTABLE;
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", statusCode);
+        body.put("errors", unsupportedOperationException.getMessage());
+        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<>(body, headers, statusCode);
+    }
+
     private String getErrorMessage(ObjectError e) {
         if (e instanceof FieldError) {
             String field = ((FieldError) e).getField();
