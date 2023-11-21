@@ -21,6 +21,7 @@ import mate.academy.onlinebookstore.repository.shoppingcart.ShoppingCartReposito
 import mate.academy.onlinebookstore.repository.user.UserRepository;
 import mate.academy.onlinebookstore.service.cartitem.CartItemService;
 import mate.academy.onlinebookstore.service.orderitem.OrderItemService;
+import mate.academy.onlinebookstore.service.shoppingcart.ShoppingCartService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,6 +31,7 @@ public class OrderSeviceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final UserRepository userRepository;
     private final ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartService shoppingCartService;
     private final CartItemService cartItemService;
     private final OrderItemService orderItemService;
     
@@ -40,7 +42,7 @@ public class OrderSeviceImpl implements OrderService {
         List<CartItem> existedCartItemsList = cartItemService
                 .findByShoppingCartId(userShoppingCart.getId());
 
-        if (existedCartItemsList.size() == 0) {
+        if (existedCartItemsList.isEmpty()) {
             throw new UnsupportedOperationException("Can't create new order without "
                     + "any items in the shopping cart");
         }
@@ -54,6 +56,8 @@ public class OrderSeviceImpl implements OrderService {
 
         orderRepository.save(order);
         order.setOrderItems(getOrderItems(order, existedCartItemsList));
+        shoppingCartService.deleteAllCartItemsByShoppingCartId(existedCartItemsList);
+
         return orderMapper.toDto(order);
     }
 
@@ -68,7 +72,7 @@ public class OrderSeviceImpl implements OrderService {
     public OrderDto updateStatus(Long id, UpdateStatusOrderDto updateStatusOrderDto) {
         Order orderById = orderRepository.findById(id).orElseThrow(() ->
                 new NoSuchElementException("Can't find the order bi id " + id));
-        orderById.setStatus(Order.Status.valueOf(updateStatusOrderDto.status()));
+        orderById.setStatus(Order.Status.valueOf(updateStatusOrderDto.getStatus()));
         return orderMapper.toDto(orderRepository.save(orderById));
     }
 
@@ -80,7 +84,7 @@ public class OrderSeviceImpl implements OrderService {
 
     private BigDecimal getTotalItemsPrice(List<CartItem> existedCartItemsList) {
         if (existedCartItemsList.size() == 0) {
-            return BigDecimal.valueOf(0L);
+            return BigDecimal.ZERO;
         }
         return existedCartItemsList.stream()
                 .map(cart -> cart.getBook().getPrice()

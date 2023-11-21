@@ -1,4 +1,12 @@
 package mate.academy.onlinebookstore.dto.order;
 
-public record UpdateStatusOrderDto(String status) {
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import mate.academy.onlinebookstore.validation.IsOrderStatus;
+
+@Data
+public class UpdateStatusOrderDto {
+    @NotNull
+    @IsOrderStatus
+    private String status;
 }
