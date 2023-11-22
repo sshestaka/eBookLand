@@ -83,7 +83,7 @@ public class OrderSeviceImpl implements OrderService {
     }
 
     private BigDecimal getTotalItemsPrice(List<CartItem> existedCartItemsList) {
-        if (existedCartItemsList.size() == 0) {
+        if (existedCartItemsList.isEmpty()) {
             return BigDecimal.ZERO;
         }
         return existedCartItemsList.stream()
