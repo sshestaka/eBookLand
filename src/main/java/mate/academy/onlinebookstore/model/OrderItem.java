@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import lombok.Data;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.EqualsExclude;
@@ -19,12 +20,12 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-@Data
 @Entity
-@Table(name = "cart_items")
+@Data
+@SQLDelete(sql = "UPDATE order_items SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
-@SQLDelete(sql = "UPDATE cart_items SET is_deleted = true WHERE id = ?")
-public class CartItem {
+@Table(name = "order_items")
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,15 +35,19 @@ public class CartItem {
     @ToString.Exclude
     @EqualsExclude
     @HashCodeExclude
-    @JoinColumn(name = "shopping_cart_id")
-    private ShoppingCart shoppingCart;
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.JOIN)
     @JoinColumn(name = "book_id")
     private Book book;
 
     @Column(nullable = false)
     private int quantity;
+
+    @Column(nullable = false)
+    private BigDecimal price;
 
     @Column(nullable = false)
     private boolean isDeleted = false;

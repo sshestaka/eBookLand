@@ -90,6 +90,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItemService.deleteById(cartItemId);
     }
 
+    @Override
+    public void deleteAllCartItemsByShoppingCartId(List<CartItem> cartItems) {
+        cartItems.forEach(cartItem -> cartItemService.deleteById(cartItem.getId()));
+    }
+
     private User findUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail).orElseThrow(() ->
                 new NoSuchElementException("Can't find a user by email: " + userEmail));
