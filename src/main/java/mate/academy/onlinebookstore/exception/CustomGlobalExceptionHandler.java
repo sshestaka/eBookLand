@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -39,7 +40,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(value = {NoSuchElementException.class })
     protected ResponseEntity<Object> handleNoSuchElementException(RuntimeException exc) {
-        NoSuchElementException noSuchElementException = (NoSuchElementException) exc;
+        InternalAuthenticationServiceException noSuchElementException =
+                (InternalAuthenticationServiceException) exc;
         HttpStatusCode statusCode = HttpStatus.NOT_FOUND;
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
