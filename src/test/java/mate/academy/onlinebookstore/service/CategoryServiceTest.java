@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import mate.academy.onlinebookstore.dto.category.CategoryDto;
 import mate.academy.onlinebookstore.dto.category.CreateCategoryDto;
-import mate.academy.onlinebookstore.mapper.BookMapper;
 import mate.academy.onlinebookstore.mapper.CategoryMapper;
 import mate.academy.onlinebookstore.model.Category;
-import mate.academy.onlinebookstore.repository.book.BookRepository;
 import mate.academy.onlinebookstore.repository.category.CategoryRepository;
 import mate.academy.onlinebookstore.service.category.CategoryServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -32,11 +30,7 @@ public class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
     @Mock
-    private BookRepository bookRepository;
-    @Mock
     private CategoryMapper categoryMapper;
-    @Mock
-    private BookMapper bookMapper;
 
     @Test
     @DisplayName("Verify save() method works")

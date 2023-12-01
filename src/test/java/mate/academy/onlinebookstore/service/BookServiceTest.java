@@ -35,6 +35,78 @@ public class BookServiceTest {
     @Mock
     private BookMapper bookMapper;
 
+    private Book getRedBookWithPrice19_99() {
+        return new Book()
+                .setId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setIsbn("Red-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Red description")
+                .setCoverImage("Red cover image");
+
+    }
+
+    private Book getGreenBookWithPrice19_99() {
+        return new Book()
+                .setId(2L)
+                .setTitle("Green Book")
+                .setAuthor("Green Author")
+                .setIsbn("Green-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Green description")
+                .setCoverImage("Green cover image");
+
+    }
+
+    private Book getBlackBookWithPrice21_99() {
+        return new Book()
+                .setId(3L)
+                .setTitle("Black Book")
+                .setAuthor("Black Author")
+                .setIsbn("Black-ISBN")
+                .setPrice(BigDecimal.valueOf(21.99))
+                .setDescription("Black description")
+                .setCoverImage("Black cover image");
+
+    }
+
+    private BookDto getRedBookDtoDtoWithPrice19_99() {
+        return new BookDto()
+                .setId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setIsbn("Red-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Red description")
+                .setCoverImage("Red cover image");
+
+    }
+
+    private BookDto getGreenBookDtoWithPrice19_99() {
+        return new BookDto()
+                .setId(2L)
+                .setTitle("Green Book")
+                .setAuthor("Green Author")
+                .setIsbn("Green-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Green description")
+                .setCoverImage("Green cover image");
+
+    }
+
+    private BookDto getBlackBookDtoWithPrice21_99() {
+        return new BookDto()
+                .setId(3L)
+                .setTitle("Black Book")
+                .setAuthor("Black Author")
+                .setIsbn("Black-ISBN")
+                .setPrice(BigDecimal.valueOf(21.99))
+                .setDescription("Black description")
+                .setCoverImage("Black cover image");
+
+    }
+
     @Test
     @DisplayName("Verify save() method works")
     public void save_ValidCreateBookRequestDto_ReturnsBookDto() {
@@ -76,46 +148,12 @@ public class BookServiceTest {
     @DisplayName("Verify getAll method works")
     public void getAll_ValidPageable_ReturnAllBooks() {
         List<Book> books = new ArrayList<>();
-        books.add(
-                new Book()
-                        .setId(1L)
-                        .setTitle("Red Book")
-                        .setAuthor("Red Author")
-                        .setIsbn("Red-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Red description")
-                        .setCoverImage("Red cover image")
-        );
-        books.add(
-                new Book()
-                        .setId(2L)
-                        .setTitle("Green Book")
-                        .setAuthor("Green Author")
-                        .setIsbn("Green-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Green description")
-                        .setCoverImage("Green cover image")
-        );
+        books.add(getRedBookWithPrice19_99());
+        books.add(getGreenBookWithPrice19_99());
 
         List<BookDto> bookDtosExpected = new ArrayList<>();
-        bookDtosExpected.add(new BookDto()
-                .setId(books.get(0).getId())
-                .setTitle(books.get(0).getTitle())
-                .setAuthor(books.get(0).getAuthor())
-                .setIsbn(books.get(0).getIsbn())
-                .setPrice(books.get(0).getPrice())
-                .setDescription(books.get(0).getDescription())
-                .setCoverImage(books.get(0).getCoverImage())
-        );
-        bookDtosExpected.add(new BookDto()
-                .setId(books.get(1).getId())
-                .setTitle(books.get(1).getTitle())
-                .setAuthor(books.get(1).getAuthor())
-                .setIsbn(books.get(1).getIsbn())
-                .setPrice(books.get(1).getPrice())
-                .setDescription(books.get(1).getDescription())
-                .setCoverImage(books.get(1).getCoverImage())
-        );
+        bookDtosExpected.add(getRedBookDtoDtoWithPrice19_99());
+        bookDtosExpected.add(getGreenBookDtoWithPrice19_99());
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Book> bookPage = new PageImpl<>(books, pageable, books.size());

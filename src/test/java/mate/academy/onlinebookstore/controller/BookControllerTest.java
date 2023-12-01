@@ -39,9 +39,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookControllerTest {
-    protected static MockMvc mockMvc;
+    private static MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     static void beforeAll(
@@ -76,6 +76,42 @@ class BookControllerTest {
                     new ClassPathResource("database/books/remove-all-books.sql")
             );
         }
+    }
+
+    private BookDto getRedBookDtoWithPrice19_99() {
+        return new BookDto()
+                .setId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setIsbn("Red-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Red description")
+                .setCoverImage("Red cover image");
+
+    }
+
+    private BookDto getGreenBookDtoWithPrice19_99() {
+        return new BookDto()
+                .setId(2L)
+                .setTitle("Green Book")
+                .setAuthor("Green Author")
+                .setIsbn("Green-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Green description")
+                .setCoverImage("Green cover image");
+
+    }
+
+    private BookDto getBlackBookDtoWithPrice21_99() {
+        return new BookDto()
+                .setId(3L)
+                .setTitle("Black Book")
+                .setAuthor("Black Author")
+                .setIsbn("Black-ISBN")
+                .setPrice(BigDecimal.valueOf(21.99))
+                .setDescription("Black description")
+                .setCoverImage("Black cover image");
+
     }
 
     @Test
@@ -123,36 +159,9 @@ class BookControllerTest {
     @WithMockUser(username = "user", roles = {"USER"})
     void getAll_GivenBooksInCatalog_ShouldReturnAllBooks() throws Exception {
         List<BookDto> expected = new ArrayList<>();
-        expected.add(
-                new BookDto()
-                        .setId(1L)
-                        .setTitle("Red Book")
-                        .setAuthor("Red Author")
-                        .setIsbn("Red-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Red description")
-                        .setCoverImage("Red cover image")
-        );
-        expected.add(
-                new BookDto()
-                        .setId(2L)
-                        .setTitle("Green Book")
-                        .setAuthor("Green Author")
-                        .setIsbn("Green-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Green description")
-                        .setCoverImage("Green cover image")
-        );
-        expected.add(
-                new BookDto()
-                        .setId(3L)
-                        .setTitle("Black Book")
-                        .setAuthor("Black Author")
-                        .setIsbn("Black-ISBN")
-                        .setPrice(BigDecimal.valueOf(21.99))
-                        .setDescription("Black description")
-                        .setCoverImage("Black cover image")
-        );
+        expected.add(getRedBookDtoWithPrice19_99());
+        expected.add(getGreenBookDtoWithPrice19_99());
+        expected.add(getBlackBookDtoWithPrice21_99());
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/books")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -171,14 +180,7 @@ class BookControllerTest {
     @DisplayName("Find book by id")
     @WithMockUser(username = "user", roles = {"USER"})
     void findById_GivenExistingBookId_ShouldReturnBook() throws Exception {
-        BookDto expected1 = new BookDto()
-                .setId(1L)
-                .setTitle("Red Book")
-                .setAuthor("Red Author")
-                .setIsbn("Red-ISBN")
-                .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Red description")
-                .setCoverImage("Red cover image");
+        BookDto expected1 = getRedBookDtoWithPrice19_99();
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/books/1")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,14 +193,7 @@ class BookControllerTest {
         );
         Assertions.assertNotNull(actual1);
         EqualsBuilder.reflectionEquals(expected1, actual1);
-        BookDto expected3 = new BookDto()
-                .setId(3L)
-                .setTitle("Black Book")
-                .setAuthor("Black Author")
-                .setIsbn("Black-ISBN")
-                .setPrice(BigDecimal.valueOf(21.99))
-                .setDescription("Black description")
-                .setCoverImage("Black cover image");
+        BookDto expected3 = getBlackBookDtoWithPrice21_99();
         mvcResult = mockMvc.perform(
                         get("/api/books/3")
                                 .contentType(MediaType.APPLICATION_JSON)

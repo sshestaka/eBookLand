@@ -40,6 +40,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CategoryControllerTest {
+    public static final String CATEGORY_1 = "Category1";
+    public static final String CATEGORY_2 = "Category2";
+    public static final String CATEGORY_3 = "Category3";
     protected static MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -77,6 +80,42 @@ public class CategoryControllerTest {
                     new ClassPathResource("database/categories/remove-all-categories.sql")
             );
         }
+    }
+
+    private BookDtoWithoutCategoryIds getRedBookDtoWithPrice19_99() {
+        return new BookDtoWithoutCategoryIds()
+                .setId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setIsbn("Red-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Red description")
+                .setCoverImage("Red cover image");
+
+    }
+
+    private BookDtoWithoutCategoryIds getGreenBookDtoWithPrice19_99() {
+        return new BookDtoWithoutCategoryIds()
+                .setId(2L)
+                .setTitle("Green Book")
+                .setAuthor("Green Author")
+                .setIsbn("Green-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Green description")
+                .setCoverImage("Green cover image");
+
+    }
+
+    private BookDtoWithoutCategoryIds getBlackBookDtoWithPrice21_99() {
+        return new BookDtoWithoutCategoryIds()
+                .setId(3L)
+                .setTitle("Black Book")
+                .setAuthor("Black Author")
+                .setIsbn("Black-ISBN")
+                .setPrice(BigDecimal.valueOf(21.99))
+                .setDescription("Black description")
+                .setCoverImage("Black cover image");
+
     }
 
     @Test
@@ -117,9 +156,9 @@ public class CategoryControllerTest {
     @WithMockUser(username = "user", roles = {"USER"})
     void getAll_GivenCategoriesInCatalog_ShouldReturnAllCategories() throws Exception {
         List<CategoryDto> expected = new ArrayList<>();
-        expected.add(new CategoryDto().setId(1L).setName("Category1").setDescription("Category1"));
-        expected.add(new CategoryDto().setId(2L).setName("Category2").setDescription("Category2"));
-        expected.add(new CategoryDto().setId(3L).setName("Category3").setDescription("Category3"));
+        expected.add(new CategoryDto().setId(1L).setName(CATEGORY_1).setDescription(CATEGORY_1));
+        expected.add(new CategoryDto().setId(2L).setName(CATEGORY_2).setDescription(CATEGORY_2));
+        expected.add(new CategoryDto().setId(3L).setName(CATEGORY_3).setDescription(CATEGORY_3));
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/categories")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -140,8 +179,8 @@ public class CategoryControllerTest {
     void findById_GivenExistingCategoryId_ShouldReturnCategory() throws Exception {
         CategoryDto expected = new CategoryDto()
                 .setId(1L)
-                .setName("Category1")
-                .setDescription("Category1");
+                .setName(CATEGORY_1)
+                .setDescription(CATEGORY_1);
         MvcResult mvcResult = mockMvc.perform(
                         get("/api/categories/1")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -218,15 +257,7 @@ public class CategoryControllerTest {
     void getBooksByCategoryId_GivenCategoriesWithBooks_ShouldReturnAllBooksByCategoryId()
             throws Exception {
         List<BookDtoWithoutCategoryIds> expectedListOneBook = new ArrayList<>();
-        expectedListOneBook.add(new BookDtoWithoutCategoryIds()
-                .setId(1L)
-                .setTitle("Red Book")
-                .setAuthor("Red Author")
-                .setIsbn("Red-ISBN")
-                .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Red description")
-                .setCoverImage("Red cover image")
-        );
+        expectedListOneBook.add(getRedBookDtoWithPrice19_99());
         MvcResult mvcResultOneBook = mockMvc.perform(
                         get("/api/categories/1/books")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -241,33 +272,9 @@ public class CategoryControllerTest {
         Assertions.assertEquals(expectedListOneBook, actualOneBook);
 
         List<BookDtoWithoutCategoryIds> expectedListThreeBooks = new ArrayList<>();
-        expectedListThreeBooks.add(new BookDtoWithoutCategoryIds()
-                .setId(1L)
-                .setTitle("Red Book")
-                .setAuthor("Red Author")
-                .setIsbn("Red-ISBN")
-                .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Red description")
-                .setCoverImage("Red cover image")
-        );
-        expectedListThreeBooks.add(new BookDtoWithoutCategoryIds()
-                        .setId(2L)
-                        .setTitle("Green Book")
-                        .setAuthor("Green Author")
-                        .setIsbn("Green-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Green description")
-                        .setCoverImage("Green cover image")
-        );
-        expectedListThreeBooks.add(new BookDtoWithoutCategoryIds()
-                        .setId(3L)
-                        .setTitle("Black Book")
-                        .setAuthor("Black Author")
-                        .setIsbn("Black-ISBN")
-                        .setPrice(BigDecimal.valueOf(21.99))
-                        .setDescription("Black description")
-                        .setCoverImage("Black cover image")
-        );
+        expectedListThreeBooks.add(getRedBookDtoWithPrice19_99());
+        expectedListThreeBooks.add(getGreenBookDtoWithPrice19_99());
+        expectedListThreeBooks.add(getBlackBookDtoWithPrice21_99());
         MvcResult mvcResultThreeBooks = mockMvc.perform(
                         get("/api/categories/2/books")
                                 .contentType(MediaType.APPLICATION_JSON)

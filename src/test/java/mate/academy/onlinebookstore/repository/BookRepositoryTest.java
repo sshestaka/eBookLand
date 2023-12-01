@@ -19,6 +19,42 @@ public class BookRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
 
+    private Book getRedBookWithPrice19_99() {
+        return new Book()
+                .setId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setIsbn("Red-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Red description")
+                .setCoverImage("Red cover image");
+
+    }
+
+    private Book getGreenBookWithPrice19_99() {
+        return new Book()
+                .setId(2L)
+                .setTitle("Green Book")
+                .setAuthor("Green Author")
+                .setIsbn("Green-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Green description")
+                .setCoverImage("Green cover image");
+
+    }
+
+    private Book getBlackBookWithPrice21_99() {
+        return new Book()
+                .setId(3L)
+                .setTitle("Black Book")
+                .setAuthor("Black Author")
+                .setIsbn("Black-ISBN")
+                .setPrice(BigDecimal.valueOf(21.99))
+                .setDescription("Black description")
+                .setCoverImage("Black cover image");
+
+    }
+
     @Test
     @DisplayName("Find all books by category id")
     @Sql(
@@ -39,51 +75,15 @@ public class BookRepositoryTest {
     )
     void findAllByCategoryId_GivenBooksWithCategories_ReturnListBooks() {
         List<Book> expectedListOneBook = new ArrayList<>();
-        expectedListOneBook.add(
-                new Book()
-                        .setId(1L)
-                        .setTitle("Red Book")
-                        .setAuthor("Red Author")
-                        .setIsbn("Red-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Red description")
-                        .setCoverImage("Red cover image")
-        );
+        expectedListOneBook.add(getRedBookWithPrice19_99());
         List<Book> actualOneBook = bookRepository.findAllByCategoryId(1L);
         Assertions.assertEquals(1, actualOneBook.size());
         Assertions.assertEquals(expectedListOneBook, actualOneBook);
 
         List<Book> expectedListThreeBooks = new ArrayList<>();
-        expectedListThreeBooks.add(
-                new Book()
-                        .setId(1L)
-                        .setTitle("Red Book")
-                        .setAuthor("Red Author")
-                        .setIsbn("Red-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Red description")
-                        .setCoverImage("Red cover image")
-        );
-        expectedListThreeBooks.add(
-                new Book()
-                        .setId(2L)
-                        .setTitle("Green Book")
-                        .setAuthor("Green Author")
-                        .setIsbn("Green-ISBN")
-                        .setPrice(BigDecimal.valueOf(19.99))
-                        .setDescription("Green description")
-                        .setCoverImage("Green cover image")
-        );
-        expectedListThreeBooks.add(
-                new Book()
-                        .setId(3L)
-                        .setTitle("Black Book")
-                        .setAuthor("Black Author")
-                        .setIsbn("Black-ISBN")
-                        .setPrice(BigDecimal.valueOf(21.99))
-                        .setDescription("Black description")
-                        .setCoverImage("Black cover image")
-        );
+        expectedListThreeBooks.add(getRedBookWithPrice19_99());
+        expectedListThreeBooks.add(getGreenBookWithPrice19_99());
+        expectedListThreeBooks.add(getBlackBookWithPrice21_99());
         List<Book> actualThreeBooks = bookRepository.findAllByCategoryId(2L);
         Assertions.assertEquals(3, actualThreeBooks.size());
         Assertions.assertEquals(expectedListThreeBooks, actualThreeBooks);
