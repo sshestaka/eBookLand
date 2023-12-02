@@ -15,6 +15,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.EqualsExclude;
 import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.hibernate.annotations.Fetch;
@@ -26,6 +27,7 @@ import org.hibernate.annotations.Where;
 @Getter
 @Setter
 @Table(name = "shopping_carts")
+@Accessors(chain = true)
 @Where(clause = "is_deleted = false")
 @SQLDelete(sql = "UPDATE shopping_carts SET is_deleted = true WHERE id = ?")
 public class ShoppingCart {

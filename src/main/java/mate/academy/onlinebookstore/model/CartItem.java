@@ -12,6 +12,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.EqualsExclude;
 import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.hibernate.annotations.Fetch;
@@ -23,6 +24,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name = "cart_items")
 @Where(clause = "is_deleted = false")
+@Accessors(chain = true)
 @SQLDelete(sql = "UPDATE cart_items SET is_deleted = true WHERE id = ?")
 public class CartItem {
     @Id

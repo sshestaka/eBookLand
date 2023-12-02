@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.EqualsExclude;
 import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.hibernate.annotations.Fetch;
@@ -25,6 +26,7 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @Table(name = "books")
+@Accessors(chain = true)
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
