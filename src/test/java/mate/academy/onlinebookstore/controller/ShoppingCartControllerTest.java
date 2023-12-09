@@ -11,15 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import mate.academy.onlinebookstore.dto.book.AddBookToShoppingCartDto;
 import mate.academy.onlinebookstore.dto.cartitem.CartItemDto;
 import mate.academy.onlinebookstore.dto.cartitem.ChangeCartItemQuantityDto;
 import mate.academy.onlinebookstore.dto.shoppingcart.ShoppingCartDto;
-import mate.academy.onlinebookstore.mapper.IMPL.ShoppingCartMapperImpl;
-import mate.academy.onlinebookstore.repository.shoppingcart.ShoppingCartRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,10 +42,6 @@ class ShoppingCartControllerTest {
     private static MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private ShoppingCartRepository shoppingCartRepository;
-    @Autowired
-    private ShoppingCartMapperImpl shoppingCartMapper;
 
     @BeforeAll
     static void beforeAll(
@@ -125,11 +118,7 @@ class ShoppingCartControllerTest {
                 mvcResult.getResponse().getContentAsString(),
                 ShoppingCartDto.class
         );
-        ShoppingCartDto expected = shoppingCartMapper.toDto(
-                shoppingCartRepository.findById(SHOPPING_CART_EXPECTED_ID)
-                .orElseThrow(() ->
-                        new NoSuchElementException("Can't find a shopping cart by id "
-                                + SHOPPING_CART_EXPECTED_ID)));
+        ShoppingCartDto expected = getShoppingCartDto();
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(expected, actual);
     }
