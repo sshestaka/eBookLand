@@ -44,9 +44,9 @@ public class CategoryControllerTest {
     public static final String CATEGORY_1 = "Category1";
     public static final String CATEGORY_2 = "Category2";
     public static final String CATEGORY_3 = "Category3";
-    protected static MockMvc mockMvc;
+    private static MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     static void beforeAll(
