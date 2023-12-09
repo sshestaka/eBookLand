@@ -20,54 +20,26 @@ public class ShoppingCartRepositoryTest {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
-    private ShoppingCart getExpectedShoppingCart() {
-        return shoppingCartRepository.findById(SHOPPING_CART_EXPECTED_ID)
-                .orElseThrow(() ->
-                        new NoSuchElementException("Can't find a shopping cart by id "
-                        + SHOPPING_CART_EXPECTED_ID));
-    }
-
     @Test
     @DisplayName("Check find by user id method")
     @Sql(
-            scripts = "classpath:database/books/add-three-default-books.sql",
+            scripts = "classpath:database/caritems/add-data-before-cart-item-repository-test.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
     )
     @Sql(
-            scripts = "classpath:database/users/add-two-test-users.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/shoppingcarts/add-shopping-cart-user-id-1.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/caritems/add-car-item-for-shopping-cart-1.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/caritems/remove-from-shopping-cart-1.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/shoppingcarts/remove-all-shopping-carts.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/users/remove-all-users.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/shoppingcarts/remove-all-shopping-carts.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/books/remove-all-books.sql",
+            scripts = "classpath:database/caritems/remove-data-after-cart-item-repository-test.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void findByUserId_GivenValidUserId_ShouldReturnShoppingCart() {
         ShoppingCart actual = shoppingCartRepository.findByUserId(USER_EXPECTED_ID);
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(getExpectedShoppingCart(), actual);
+    }
+
+    private ShoppingCart getExpectedShoppingCart() {
+        return shoppingCartRepository.findById(SHOPPING_CART_EXPECTED_ID)
+                .orElseThrow(() ->
+                        new NoSuchElementException("Can't find a shopping cart by id "
+                                + SHOPPING_CART_EXPECTED_ID));
     }
 }

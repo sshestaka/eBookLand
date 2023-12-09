@@ -39,6 +39,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookControllerTest {
+    public static final double TEST_BOOK_PRICE = 44.95;
+    public static final double UPDATED_BOOK_PRICE = 999.99;
     private static MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
@@ -78,42 +80,6 @@ class BookControllerTest {
         }
     }
 
-    private BookDto getRedBookDtoWithPrice19_99() {
-        return new BookDto()
-                .setId(1L)
-                .setTitle("Red Book")
-                .setAuthor("Red Author")
-                .setIsbn("Red-ISBN")
-                .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Red description")
-                .setCoverImage("Red cover image");
-
-    }
-
-    private BookDto getGreenBookDtoWithPrice19_99() {
-        return new BookDto()
-                .setId(2L)
-                .setTitle("Green Book")
-                .setAuthor("Green Author")
-                .setIsbn("Green-ISBN")
-                .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Green description")
-                .setCoverImage("Green cover image");
-
-    }
-
-    private BookDto getBlackBookDtoWithPrice21_99() {
-        return new BookDto()
-                .setId(3L)
-                .setTitle("Black Book")
-                .setAuthor("Black Author")
-                .setIsbn("Black-ISBN")
-                .setPrice(BigDecimal.valueOf(21.99))
-                .setDescription("Black description")
-                .setCoverImage("Black cover image");
-
-    }
-
     @Test
     @DisplayName("Create a new Book")
     @WithMockUser(username = "admin", roles = {"ADMIN"})
@@ -122,21 +88,8 @@ class BookControllerTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void createBook_ValidRequestDto_Success() throws Exception {
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        requestDto.setTitle("Test-Book");
-        requestDto.setAuthor("Test-Author");
-        requestDto.setIsbn("Test-ISBN");
-        requestDto.setPrice(BigDecimal.valueOf(44.95));
-        requestDto.setDescription("Test-Description");
-        requestDto.setCoverImage("Test-Cover-Image");
-        BookDto expected = new BookDto()
-                .setTitle(requestDto.getTitle())
-                .setAuthor(requestDto.getAuthor())
-                .setIsbn(requestDto.getIsbn())
-                .setPrice(requestDto.getPrice())
-                .setDescription(requestDto.getDescription())
-                .setCoverImage(requestDto.getCoverImage());
-
+        CreateBookRequestDto requestDto = getTestBookDto();
+        BookDto expected = getBookDto(requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         MvcResult mvcResult = mockMvc.perform(
                         post("/api/books")
@@ -226,23 +179,8 @@ class BookControllerTest {
     @DisplayName("Update book by id")
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void updateBook_UpdateExistedBook_Success() throws Exception {
-        UpdateBookRequestDto updateBookRequestDto = new UpdateBookRequestDto();
-        updateBookRequestDto.setTitle("Updated Red Book");
-        updateBookRequestDto.setAuthor("Updated Red Author");
-        updateBookRequestDto.setIsbn("Updated Red-ISBN");
-        updateBookRequestDto.setPrice(BigDecimal.valueOf(999.99));
-        updateBookRequestDto.setDescription("Updated Red description");
-        updateBookRequestDto.setCoverImage("Updated Red cover image");
-
-        BookDto expected = new BookDto()
-                .setId(1L)
-                .setTitle("Updated Red Book")
-                .setAuthor("Updated Red Author")
-                .setIsbn("Updated Red-ISBN")
-                .setPrice(BigDecimal.valueOf(999.99))
-                .setDescription("Updated Red description")
-                .setCoverImage("Updated Red cover image");
-
+        UpdateBookRequestDto updateBookRequestDto = getUpdateBookRequestDto();
+        BookDto expected = getBookDtoFromUpdatedBookRequestDto(updateBookRequestDto);
         String jsonRequest = objectMapper.writeValueAsString(updateBookRequestDto);
         MvcResult mvcResult = mockMvc.perform(
                         patch("/api/books/1")
@@ -257,5 +195,82 @@ class BookControllerTest {
         );
         Assertions.assertNotNull(actual);
         EqualsBuilder.reflectionEquals(expected, actual);
+    }
+
+    private BookDto getBookDtoFromUpdatedBookRequestDto(UpdateBookRequestDto updateBookRequestDto) {
+        return new BookDto()
+                .setId(1L)
+                .setTitle(updateBookRequestDto.getTitle())
+                .setAuthor(updateBookRequestDto.getAuthor())
+                .setIsbn(updateBookRequestDto.getIsbn())
+                .setPrice(BigDecimal.valueOf(UPDATED_BOOK_PRICE))
+                .setDescription(updateBookRequestDto.getDescription())
+                .setCoverImage(updateBookRequestDto.getCoverImage());
+    }
+
+    private UpdateBookRequestDto getUpdateBookRequestDto() {
+        return new UpdateBookRequestDto()
+                .setTitle("Updated Red Book")
+                .setAuthor("Updated Red Author")
+                .setIsbn("Updated Red-ISBN")
+                .setPrice(BigDecimal.valueOf(UPDATED_BOOK_PRICE))
+                .setDescription("Updated Red description")
+                .setCoverImage("Updated Red cover image");
+    }
+
+    private BookDto getRedBookDtoWithPrice19_99() {
+        return new BookDto()
+                .setId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setIsbn("Red-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Red description")
+                .setCoverImage("Red cover image");
+
+    }
+
+    private BookDto getGreenBookDtoWithPrice19_99() {
+        return new BookDto()
+                .setId(2L)
+                .setTitle("Green Book")
+                .setAuthor("Green Author")
+                .setIsbn("Green-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Green description")
+                .setCoverImage("Green cover image");
+
+    }
+
+    private BookDto getBlackBookDtoWithPrice21_99() {
+        return new BookDto()
+                .setId(3L)
+                .setTitle("Black Book")
+                .setAuthor("Black Author")
+                .setIsbn("Black-ISBN")
+                .setPrice(BigDecimal.valueOf(21.99))
+                .setDescription("Black description")
+                .setCoverImage("Black cover image");
+
+    }
+
+    private BookDto getBookDto(CreateBookRequestDto requestDto) {
+        return new BookDto()
+                .setTitle(requestDto.getTitle())
+                .setAuthor(requestDto.getAuthor())
+                .setIsbn(requestDto.getIsbn())
+                .setPrice(requestDto.getPrice())
+                .setDescription(requestDto.getDescription())
+                .setCoverImage(requestDto.getCoverImage());
+    }
+
+    private CreateBookRequestDto getTestBookDto() {
+        return new CreateBookRequestDto()
+                .setTitle("Test-Book")
+                .setAuthor("Test-Author")
+                .setIsbn("Test-ISBN")
+                .setPrice(BigDecimal.valueOf(TEST_BOOK_PRICE))
+                .setDescription("Test-Description")
+                .setCoverImage("Test-Cover-Image");
     }
 }

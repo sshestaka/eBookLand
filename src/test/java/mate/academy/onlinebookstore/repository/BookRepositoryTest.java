@@ -19,6 +19,40 @@ public class BookRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Test
+    @DisplayName("Find all books by category id")
+    @Sql(
+            scripts = "classpath:database/books/add-three-default-books.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
+    @Sql(
+            scripts = "classpath:database/categories/add-books-in-books-categories.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
+    @Sql(
+            scripts = "classpath:database/categories/remove-all-from-books-categories.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+    )
+    @Sql(
+            scripts = "classpath:database/books/remove-all-books.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+    )
+    void findAllByCategoryId_GivenBooksWithCategories_ReturnListBooks() {
+        List<Book> expectedListOneBook = new ArrayList<>();
+        expectedListOneBook.add(getRedBookWithPrice19_99());
+        List<Book> actualOneBook = bookRepository.findAllByCategoryId(1L);
+        Assertions.assertEquals(1, actualOneBook.size());
+        Assertions.assertEquals(expectedListOneBook, actualOneBook);
+
+        List<Book> expectedListThreeBooks = new ArrayList<>();
+        expectedListThreeBooks.add(getRedBookWithPrice19_99());
+        expectedListThreeBooks.add(getGreenBookWithPrice19_99());
+        expectedListThreeBooks.add(getBlackBookWithPrice21_99());
+        List<Book> actualThreeBooks = bookRepository.findAllByCategoryId(2L);
+        Assertions.assertEquals(3, actualThreeBooks.size());
+        Assertions.assertEquals(expectedListThreeBooks, actualThreeBooks);
+    }
+
     private Book getRedBookWithPrice19_99() {
         return new Book()
                 .setId(1L)
@@ -53,39 +87,5 @@ public class BookRepositoryTest {
                 .setDescription("Black description")
                 .setCoverImage("Black cover image");
 
-    }
-
-    @Test
-    @DisplayName("Find all books by category id")
-    @Sql(
-            scripts = "classpath:database/books/add-three-default-books.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/categories/add-books-in-books-categories.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/categories/remove-all-from-books-categories.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/books/remove-all-books.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
-    void findAllByCategoryId_GivenBooksWithCategories_ReturnListBooks() {
-        List<Book> expectedListOneBook = new ArrayList<>();
-        expectedListOneBook.add(getRedBookWithPrice19_99());
-        List<Book> actualOneBook = bookRepository.findAllByCategoryId(1L);
-        Assertions.assertEquals(1, actualOneBook.size());
-        Assertions.assertEquals(expectedListOneBook, actualOneBook);
-
-        List<Book> expectedListThreeBooks = new ArrayList<>();
-        expectedListThreeBooks.add(getRedBookWithPrice19_99());
-        expectedListThreeBooks.add(getGreenBookWithPrice19_99());
-        expectedListThreeBooks.add(getBlackBookWithPrice21_99());
-        List<Book> actualThreeBooks = bookRepository.findAllByCategoryId(2L);
-        Assertions.assertEquals(3, actualThreeBooks.size());
-        Assertions.assertEquals(expectedListThreeBooks, actualThreeBooks);
     }
 }

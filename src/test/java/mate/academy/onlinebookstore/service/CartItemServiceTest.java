@@ -29,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class CartItemServiceTest {
     private static final int RED_BOOK_QUANTITY = 10;
     private static final Long NON_EXISTING_ID = 100L;
+    private static final String NON_EXISTING_ID_EXCEPTION = "Can't find an item by id: ";
     @InjectMocks
     private CartItemServiceImpl cartItemService;
     @Mock
@@ -39,6 +40,32 @@ public class CartItemServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private RoleRepository roleRepository;
+
+    @Test
+    @DisplayName("Verify save() method works")
+    public void save_GivenValidCartItem_ShouldReturnCartItemDto() {
+        CartItem cartItem = getCartitem();
+        CartItemDto cartItemDto = getCartitemDto();
+        when(cartItemRepository.save(cartItem)).thenReturn(cartItem);
+        when(cartItemMapper.toDto(cartItem)).thenReturn(cartItemDto);
+        CartItemDto actual = cartItemService.save(cartItem);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(actual, cartItemDto);
+    }
+
+    @Test
+    @DisplayName("Verify finById method works with non valid id")
+    public void findById_GivenNonValidId_ShouldThrowsException() {
+        Mockito.when(cartItemRepository.findById(NON_EXISTING_ID))
+                .thenReturn(Optional.empty());
+        Exception exception = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> cartItemService.findById(NON_EXISTING_ID)
+        );
+        String expected = NON_EXISTING_ID_EXCEPTION + NON_EXISTING_ID;
+        String actual = exception.getMessage();
+        Assertions.assertEquals(expected, actual);
+    }
 
     private User getUserTest1() {
         return new User()
@@ -84,31 +111,5 @@ public class CartItemServiceTest {
                 .setBookId(getCartitem().getBook().getId())
                 .setBookTitle(getCartitem().getBook().getTitle())
                 .setQuantity(getCartitem().getQuantity());
-    }
-
-    @Test
-    @DisplayName("Verify save() method works")
-    public void save_GivenValidCartItem_ShouldReturnCartItemDto() {
-        CartItem cartItem = getCartitem();
-        CartItemDto cartItemDto = getCartitemDto();
-        when(cartItemRepository.save(cartItem)).thenReturn(cartItem);
-        when(cartItemMapper.toDto(cartItem)).thenReturn(cartItemDto);
-        CartItemDto actual = cartItemService.save(cartItem);
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(actual, cartItemDto);
-    }
-
-    @Test
-    @DisplayName("Verify finById method works with non valid id")
-    public void findById_GivenNonValidId_ShouldThrowsException() {
-        Mockito.when(cartItemRepository.findById(NON_EXISTING_ID))
-                .thenReturn(Optional.empty());
-        Exception exception = Assertions.assertThrows(
-                RuntimeException.class,
-                () -> cartItemService.findById(NON_EXISTING_ID)
-        );
-        String expected = "Can't find an item by id: " + NON_EXISTING_ID;
-        String actual = exception.getMessage();
-        Assertions.assertEquals(expected, actual);
     }
 }

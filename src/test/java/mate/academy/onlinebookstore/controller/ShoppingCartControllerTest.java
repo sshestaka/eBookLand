@@ -36,18 +36,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ShoppingCartControllerTest {
-    public static final AddBookToShoppingCartDto ADD_BOOK_TO_SHOPPING_CART_DTO
-            = new AddBookToShoppingCartDto()
-            .setBookId(1L).setTitle("Red Book").setAuthor("Red Author").setQuantity(10);
-    public static final List<CartItemDto> CART_ITEMS = List.of(new CartItemDto()
-            .setId(1L)
-            .setBookId(1L)
-            .setBookTitle("Red Book")
-            .setQuantity(10));
-    public static final ShoppingCartDto SHOPPING_CART_DTO_EXPECTED = new ShoppingCartDto()
-            .setId(1L)
-            .setUserId(1L)
-            .setCartItems(CART_ITEMS);
+    public static final int RED_BOOK_QUANTITY = 10;
+    public static final int UPDATED_QUANTITY = 11;
     protected static MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -74,7 +64,9 @@ class ShoppingCartControllerTest {
             );
             ScriptUtils.executeSqlScript(
                     connection,
-                    new ClassPathResource("database/shoppingcarts/add-shopping-cart-user-id-1.sql")
+                    new ClassPathResource(
+                            "database/shoppingcarts/add-shopping-cart-for-users-1-and-2.sql"
+                    )
             );
         }
     }
@@ -112,7 +104,7 @@ class ShoppingCartControllerTest {
     )
     void addItemToShoppingCart_GivenValidAddBookToShoppingCartDto_ShouldReturnShoppingCartDto()
             throws Exception {
-        String jsonRequest = objectMapper.writeValueAsString(ADD_BOOK_TO_SHOPPING_CART_DTO);
+        String jsonRequest = objectMapper.writeValueAsString(getAddBookToShoppingCartDto());
         MvcResult mvcResult = mockMvc.perform(
                         post("/api/cart")
                                 .content(jsonRequest)
@@ -124,8 +116,9 @@ class ShoppingCartControllerTest {
                 mvcResult.getResponse().getContentAsString(),
                 ShoppingCartDto.class
         );
+        ShoppingCartDto expected = getShoppingCartDto();
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(SHOPPING_CART_DTO_EXPECTED, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -151,8 +144,9 @@ class ShoppingCartControllerTest {
                 mvcResult.getResponse().getContentAsString(),
                 ShoppingCartDto.class
         );
+        ShoppingCartDto expected = getShoppingCartDto();
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(SHOPPING_CART_DTO_EXPECTED, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -167,9 +161,6 @@ class ShoppingCartControllerTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void delete_GivenValidCartItem_ShouldDeleteCartItemFromUserShoppingCart() throws Exception {
-        ShoppingCartDto expectedShoppingCart = new ShoppingCartDto()
-                .setId(1L)
-                .setUserId(1L);
         MvcResult mvcResult = mockMvc.perform(
                         delete("/api/cart/cart-items/1")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,16 +182,14 @@ class ShoppingCartControllerTest {
     )
     void updateQuantityByItemId_GivenValidParameters_ShouldReturnShoppingCartDto()
             throws Exception {
-        List<CartItemDto> redBooks11Pc = List.of(new CartItemDto()
-                .setId(1L)
-                .setBookId(1L)
-                .setBookTitle("Red Book")
-                .setQuantity(11));
+        CartItemDto redBookCartItemDtoWithUpdatedQuantity = getRedBookCartItemDto()
+                .setQuantity(UPDATED_QUANTITY);
         ShoppingCartDto shoppingCartDtoExpected = new ShoppingCartDto()
                 .setId(1L)
                 .setUserId(1L)
-                .setCartItems(redBooks11Pc);
-        ChangeCartItemQuantityDto changeItemsQuantityDto = new ChangeCartItemQuantityDto(11);
+                .setCartItems(List.of(redBookCartItemDtoWithUpdatedQuantity));
+        ChangeCartItemQuantityDto changeItemsQuantityDto =
+                new ChangeCartItemQuantityDto(UPDATED_QUANTITY);
         String jsonRequest = objectMapper.writeValueAsString(changeItemsQuantityDto);
         MvcResult mvcResult = mockMvc.perform(
                         patch("/api/cart/cart-items/1")
@@ -215,5 +204,28 @@ class ShoppingCartControllerTest {
         );
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(shoppingCartDtoExpected, actual);
+    }
+
+    private ShoppingCartDto getShoppingCartDto() {
+        return new ShoppingCartDto()
+                .setId(1L)
+                .setUserId(1L)
+                .setCartItems(List.of(getRedBookCartItemDto()));
+    }
+
+    private CartItemDto getRedBookCartItemDto() {
+        return new CartItemDto()
+                .setId(1L)
+                .setBookId(1L)
+                .setBookTitle("Red Book")
+                .setQuantity(RED_BOOK_QUANTITY);
+    }
+
+    private Object getAddBookToShoppingCartDto() {
+        return new AddBookToShoppingCartDto()
+                .setBookId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setQuantity(RED_BOOK_QUANTITY);
     }
 }

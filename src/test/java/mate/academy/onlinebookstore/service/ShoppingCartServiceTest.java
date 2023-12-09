@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -68,6 +67,146 @@ public class ShoppingCartServiceTest {
     @Mock
     private BookMapper bookMapper;
 
+    @Test
+    @DisplayName("Verify save() method works")
+    public void save_GivenValidUser_ShouldReturnShoppingCart() {
+        User user = getUserTest1();
+        userRepository.save(user);
+        ShoppingCart shoppingCart = getShoppingCart(user);
+        Mockito.when(shoppingCartRepository.save(any())).thenReturn(shoppingCart);
+        ShoppingCart actualShoppingCart = shoppingCartService.save(user);
+        assertEquals(shoppingCart, actualShoppingCart);
+    }
+
+    @Test
+    @DisplayName("Verify save() method add cart items works when given an existing cart item")
+    public void addCartItem_GivenCartItemWithExistingBook_ShouldIncreaseQuantity() {
+        User user = getUserTest1();
+        userRepository.save(user);
+
+        ShoppingCart shoppingCart = getShoppingCart(user);
+        shoppingCartRepository.save(shoppingCart);
+
+        Book redBook = getRedBookWithPrice19_99();
+        bookRepository.save(redBook);
+
+        CartItem cartItem = getCartItem(shoppingCart, redBook, RED_BOOK_QUANTITY);
+        cartItemService.save(cartItem);
+
+        shoppingCart.setCartItems(Collections.singleton(cartItem));
+
+        AddBookToShoppingCartDto addBookToShoppingCartDto =
+                getAddBookToShoppingCartDto(redBook, RED_BOOK_QUANTITY);
+
+        CartItemDto cartItemDto = getCartItemDto(cartItem);
+
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto(shoppingCart, List.of(cartItemDto));
+
+        BookDto bookDto = getRedBookDtoWithPrice19_99();
+
+        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        Mockito.when(shoppingCartRepository.findByUserId(user.getId())).thenReturn(shoppingCart);
+        Mockito.when(bookService.findById(addBookToShoppingCartDto.getBookId()))
+                .thenReturn(bookDto);
+        doReturn(List.of(cartItem)).when(cartItemService)
+                .findByShoppingCartId(shoppingCart.getId());
+        Mockito.when(cartItemService.save(cartItem)).thenReturn(cartItemDto);
+        Mockito.when(shoppingCartMapper.toDto(shoppingCart)).thenReturn(shoppingCartDto);
+        ShoppingCartDto shoppingCartDtoActual = shoppingCartService
+                .addCartItem(addBookToShoppingCartDto, user.getEmail());
+        assertNotNull(shoppingCartDtoActual);
+        assertEquals(shoppingCartDtoActual, shoppingCartDto);
+    }
+
+    @Test
+    @DisplayName("Verify save() method add cart items works when given an existing cart item")
+    public void addCartItem_GivenCartItemWithNewBook_ShouldAddNewCartItem() {
+        User user = getUserTest1();
+        userRepository.save(user);
+
+        ShoppingCart shoppingCart = getShoppingCart(user);
+        shoppingCartRepository.save(shoppingCart);
+
+        Book redBook = getRedBookWithPrice19_99();
+        bookRepository.save(redBook);
+
+        CartItem redCartItem = getCartItem(shoppingCart, redBook, RED_BOOK_QUANTITY);
+        cartItemService.save(redCartItem);
+
+        shoppingCart.setCartItems(new HashSet<>());
+        shoppingCart.getCartItems().add(redCartItem);
+
+        Book greenBook = getGreenBookWithPrice19_99();
+
+        CartItem greenCartItem = getCartItem(shoppingCart, greenBook, GREEN_BOOK_QUANTITY);
+        cartItemService.save(greenCartItem);
+
+        CartItemDto greenCartItemDto = getCartItemDto(greenCartItem);
+        BookDto greenBookDto = getGreenBookDtoWithPrice19_99();
+        AddBookToShoppingCartDto addBookToShoppingCartDto =
+                getAddBookToShoppingCartDto(greenBook, GREEN_BOOK_QUANTITY);
+
+        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        Mockito.when(shoppingCartRepository.findByUserId(user.getId())).thenReturn(shoppingCart);
+
+        doReturn(greenBookDto).when(bookService).findById(addBookToShoppingCartDto.getBookId());
+        doReturn(List.of(redCartItem)).when(cartItemService)
+                .findByShoppingCartId(shoppingCart.getId());
+        Mockito.when(bookMapper.toModelFromBookDto(greenBookDto)).thenReturn(greenBook);
+        Mockito.when(cartItemService.save(any())).thenReturn(greenCartItemDto);
+
+        CartItemDto redCartItemDto = getCartItemDto(redCartItem);
+        ShoppingCartDto shoppingCartDto =
+                getShoppingCartDto(shoppingCart, List.of(redCartItemDto, greenCartItemDto));
+
+        Mockito.when(shoppingCartMapper.toDto(shoppingCart)).thenReturn(shoppingCartDto);
+        ShoppingCartDto shoppingCartDtoActual = shoppingCartService
+                .addCartItem(addBookToShoppingCartDto, user.getEmail());
+        assertNotNull(shoppingCartDtoActual);
+        assertEquals(shoppingCartDtoActual, shoppingCartDto);
+    }
+
+    @Test
+    @DisplayName("Verify get Shopping Cart by User's email works when given an existing user email")
+    public void getShoppingCartByUserEmail_GivenValidUserEmail_ShouldReturnShoppingCart() {
+        User user = getUserTest1();
+        userRepository.save(user);
+        ShoppingCart shoppingCart = getShoppingCart(user);
+        shoppingCartRepository.save(shoppingCart);
+        Book redBook = getRedBookWithPrice19_99();
+        CartItem redCartItem = getCartItem(shoppingCart, redBook, RED_BOOK_QUANTITY);
+        cartItemService.save(redCartItem);
+        CartItemDto redCartItemDto = getCartItemDto(redCartItem);
+        ShoppingCartDto shoppingCartDto = getShoppingCartDto(shoppingCart, List.of(redCartItemDto));
+        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(shoppingCartRepository.findByUserId(user.getId())).thenReturn(shoppingCart);
+        when(shoppingCartMapper.toDto(shoppingCart)).thenReturn(shoppingCartDto);
+        Pageable pageable = PageRequest.of(0, 10);
+        ShoppingCartDto actualShoppingCart =
+                shoppingCartService.getShoppingCartByUserEmail(user.getEmail(), pageable);
+        assertNotNull(actualShoppingCart);
+        assertEquals(actualShoppingCart, shoppingCartDto);
+    }
+
+    @Test
+    @DisplayName("Verify get Shopping Cart by User's email works "
+            + "when given a non existing user email")
+    public void getShoppingCartByUserEmail_GivenNonExistingUserEmail_ShouldThrowsException() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Mockito.when(userRepository.findByEmail(NON_EXISTING_USER_EMAIL))
+                .thenReturn(Optional.empty());
+        Exception exception = Assertions.assertThrows(
+                RuntimeException.class,
+                () -> shoppingCartService.getShoppingCartByUserEmail(
+                        NON_EXISTING_USER_EMAIL,
+                        pageable
+                )
+        );
+        String expected = "Can't find a user by email: " + NON_EXISTING_USER_EMAIL;
+        String actual = exception.getMessage();
+        Assertions.assertEquals(expected, actual);
+    }
+
     private User getUserTest1() {
         return new User()
                 .setId(1L)
@@ -128,202 +267,43 @@ public class ShoppingCartServiceTest {
 
     }
 
-    @Test
-    @DisplayName("Verify save() method works")
-    public void save_GivenValidUser_ShouldReturnShoppingCart() {
-        User user = getUserTest1();
-        userRepository.save(user);
-
-        ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setId(1L);
-        shoppingCart.setUser(user);
-
-        Mockito.when(shoppingCartRepository.save(any())).thenReturn(shoppingCart);
-        ShoppingCart actualShoppingCart = shoppingCartService.save(user);
-        assertEquals(shoppingCart, actualShoppingCart);
+    private AddBookToShoppingCartDto getAddBookToShoppingCartDto(Book book, int quantity) {
+        return new AddBookToShoppingCartDto()
+                .setBookId(1L)
+                .setTitle(book.getTitle())
+                .setAuthor(book.getAuthor())
+                .setQuantity(quantity);
     }
 
-    @Test
-    @DisplayName("Verify save() method add cart items works when given an existing cart item")
-    public void addCartItem_GivenCartItemWithExistingBook_ShouldIncreaseQuantity() {
-        User user = getUserTest1();
-        userRepository.save(user);
-
-        ShoppingCart shoppingCart = new ShoppingCart()
+    private ShoppingCart getShoppingCart(User user) {
+        return new ShoppingCart()
                 .setId(1L)
                 .setUser(user);
-        shoppingCartRepository.save(shoppingCart);
+    }
 
-        Book book = getRedBookWithPrice19_99();
-        bookRepository.save(book);
-
-        CartItem cartItem = new CartItem()
+    private CartItem getCartItem(ShoppingCart shoppingCart, Book book, int quantity) {
+        return new CartItem()
                 .setId(1L)
                 .setShoppingCart(shoppingCart)
                 .setBook(book)
-                .setQuantity(RED_BOOK_QUANTITY);
-        cartItemService.save(cartItem);
-
-        shoppingCart.setCartItems(Collections.singleton(cartItem));
-
-        AddBookToShoppingCartDto addBookToShoppingCartDto = new AddBookToShoppingCartDto();
-        addBookToShoppingCartDto.setBookId(book.getId());
-        addBookToShoppingCartDto.setTitle(book.getTitle());
-        addBookToShoppingCartDto.setAuthor(book.getAuthor());
-        addBookToShoppingCartDto.setQuantity(RED_BOOK_QUANTITY);
-
-        CartItemDto cartItemDto = new CartItemDto();
-        cartItemDto.setId(cartItem.getId());
-        cartItemDto.setBookId(cartItem.getBook().getId());
-        cartItemDto.setBookTitle(cartItem.getBook().getTitle());
-        cartItemDto.setQuantity(cartItem.getQuantity() + 1);
-
-        ShoppingCartDto shoppingCartDto = new ShoppingCartDto()
-                .setId(shoppingCart.getId())
-                .setUserId(shoppingCart.getUser().getId())
-                .setCartItems(List.of(cartItemDto));
-
-        BookDto bookDto = getRedBookDtoWithPrice19_99();
-
-        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Mockito.when(shoppingCartRepository.findByUserId(user.getId())).thenReturn(shoppingCart);
-        Mockito.when(bookService.findById(addBookToShoppingCartDto.getBookId()))
-                .thenReturn(bookDto);
-        doReturn(List.of(cartItem)).when(cartItemService)
-                .findByShoppingCartId(shoppingCart.getId());
-        Mockito.when(cartItemService.save(cartItem)).thenReturn(cartItemDto);
-        Mockito.when(shoppingCartMapper.toDto(shoppingCart)).thenReturn(shoppingCartDto);
-        ShoppingCartDto shoppingCartDtoActual = shoppingCartService
-                .addCartItem(addBookToShoppingCartDto, user.getEmail());
-        assertNotNull(shoppingCartDtoActual);
-        assertEquals(shoppingCartDtoActual, shoppingCartDto);
+                .setQuantity(quantity);
     }
 
-    @Test
-    @DisplayName("Verify save() method add cart items works when given an existing cart item")
-    public void addCartItem_GivenCartItemWithNewBook_ShouldAddNewCartItem() {
-        User user = getUserTest1();
-        userRepository.save(user);
-
-        ShoppingCart shoppingCart = new ShoppingCart()
-                .setId(1L)
-                .setUser(user);
-        shoppingCartRepository.save(shoppingCart);
-
-        Book redBook = getRedBookWithPrice19_99();
-        bookRepository.save(redBook);
-
-        CartItem redCartItem = new CartItem()
-                .setId(1L)
-                .setShoppingCart(shoppingCart)
-                .setBook(redBook)
-                .setQuantity(RED_BOOK_QUANTITY);
-        cartItemService.save(redCartItem);
-
-        CartItemDto redCartItemDto = new CartItemDto();
-        redCartItemDto.setId(redCartItem.getId());
-        redCartItemDto.setBookId(redCartItem.getBook().getId());
-        redCartItemDto.setBookTitle(redCartItem.getBook().getTitle());
-        redCartItemDto.setQuantity(redCartItem.getQuantity());
-
-        shoppingCart.setCartItems(new HashSet<>());
-        shoppingCart.getCartItems().add(redCartItem);
-
-        Book greenBook = getGreenBookWithPrice19_99();
-
-        AddBookToShoppingCartDto addBookToShoppingCartDto = new AddBookToShoppingCartDto();
-        addBookToShoppingCartDto.setBookId(greenBook.getId());
-        addBookToShoppingCartDto.setTitle(greenBook.getTitle());
-        addBookToShoppingCartDto.setAuthor(greenBook.getAuthor());
-        addBookToShoppingCartDto.setQuantity(GREEN_BOOK_QUANTITY);
-
-        CartItem greenCartItem = new CartItem()
-                .setId(2L)
-                .setShoppingCart(shoppingCart)
-                .setBook(greenBook)
-                .setQuantity(GREEN_BOOK_QUANTITY);
-        cartItemService.save(greenCartItem);
-
-        CartItemDto greenCartItemDto = new CartItemDto();
-        greenCartItemDto.setId(greenCartItem.getId());
-        greenCartItemDto.setBookId(greenCartItem.getBook().getId());
-        greenCartItemDto.setBookTitle(greenCartItem.getBook().getTitle());
-        greenCartItemDto.setQuantity(greenCartItem.getQuantity());
-
-        BookDto greenBookDto = getGreenBookDtoWithPrice19_99();
-
-        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        Mockito.when(shoppingCartRepository.findByUserId(user.getId())).thenReturn(shoppingCart);
-
-        doReturn(greenBookDto).when(bookService).findById(addBookToShoppingCartDto.getBookId());
-        doReturn(List.of(redCartItem)).when(cartItemService)
-                .findByShoppingCartId(shoppingCart.getId());
-        Mockito.when(bookMapper.toModelFromBookDto(greenBookDto)).thenReturn(greenBook);
-        Mockito.when(cartItemService.save(any())).thenReturn(greenCartItemDto);
-
-        ShoppingCartDto shoppingCartDto = new ShoppingCartDto()
+    private ShoppingCartDto getShoppingCartDto(
+            ShoppingCart shoppingCart,
+            List<CartItemDto> cartItemDto
+    ) {
+        return new ShoppingCartDto()
                 .setId(shoppingCart.getId())
                 .setUserId(shoppingCart.getUser().getId())
-                .setCartItems(List.of(redCartItemDto, greenCartItemDto));
-
-        Mockito.when(shoppingCartMapper.toDto(shoppingCart)).thenReturn(shoppingCartDto);
-        ShoppingCartDto shoppingCartDtoActual = shoppingCartService
-                .addCartItem(addBookToShoppingCartDto, user.getEmail());
-        assertNotNull(shoppingCartDtoActual);
-        assertEquals(shoppingCartDtoActual, shoppingCartDto);
+                .setCartItems(cartItemDto);
     }
 
-    @Test
-    @DisplayName("Verify get Shopping Cart by User's email works when given an existing user email")
-    public void getShoppingCartByUserEmail_GivenValidUserEmail_ShouldReturnShoppingCart() {
-        User user = getUserTest1();
-        userRepository.save(user);
-        ShoppingCart shoppingCart = new ShoppingCart()
-                .setId(1L)
-                .setUser(user);
-        shoppingCartRepository.save(shoppingCart);
-        Book redBook = getRedBookWithPrice19_99();
-        CartItem redCartItem = spy(new CartItem())
-                .setId(1L)
-                .setShoppingCart(shoppingCart)
-                .setBook(redBook)
-                .setQuantity(RED_BOOK_QUANTITY);
-        cartItemService.save(redCartItem);
-        CartItemDto redCartItemDto = new CartItemDto();
-        redCartItemDto.setId(redCartItem.getId());
-        redCartItemDto.setBookId(redCartItem.getBook().getId());
-        redCartItemDto.setBookTitle(redCartItem.getBook().getTitle());
-        redCartItemDto.setQuantity(redCartItem.getQuantity());
-        ShoppingCartDto shoppingCartDto = new ShoppingCartDto()
-                .setId(shoppingCart.getId())
-                .setUserId(shoppingCart.getUser().getId())
-                .setCartItems(List.of(redCartItemDto));
-        Mockito.when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(shoppingCartRepository.findByUserId(user.getId())).thenReturn(shoppingCart);
-        when(shoppingCartMapper.toDto(shoppingCart)).thenReturn(shoppingCartDto);
-        Pageable pageable = PageRequest.of(0, 10);
-        ShoppingCartDto actualShoppingCart =
-                shoppingCartService.getShoppingCartByUserEmail(user.getEmail(), pageable);
-        assertNotNull(actualShoppingCart);
-        assertEquals(actualShoppingCart, shoppingCartDto);
-    }
-
-    @Test
-    @DisplayName("Verify get Shopping Cart by User's email works "
-            + "when given a non existing user email")
-    public void getShoppingCartByUserEmail_GivenNonExistingUserEmail_ShouldThrowsException() {
-        Pageable pageable = PageRequest.of(0, 10);
-        Mockito.when(userRepository.findByEmail(NON_EXISTING_USER_EMAIL))
-                .thenReturn(Optional.empty());
-        Exception exception = Assertions.assertThrows(
-                RuntimeException.class,
-                () -> shoppingCartService.getShoppingCartByUserEmail(
-                        NON_EXISTING_USER_EMAIL,
-                        pageable
-                )
-        );
-        String expected = "Can't find a user by email: " + NON_EXISTING_USER_EMAIL;
-        String actual = exception.getMessage();
-        Assertions.assertEquals(expected, actual);
+    private CartItemDto getCartItemDto(CartItem cartItem) {
+        return new CartItemDto()
+                .setId(cartItem.getId())
+                .setBookId(cartItem.getBook().getId())
+                .setBookTitle(cartItem.getBook().getTitle())
+                .setQuantity(cartItem.getQuantity() + 1);
     }
 }
