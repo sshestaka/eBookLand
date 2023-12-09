@@ -17,6 +17,7 @@ import mate.academy.onlinebookstore.dto.book.AddBookToShoppingCartDto;
 import mate.academy.onlinebookstore.dto.cartitem.CartItemDto;
 import mate.academy.onlinebookstore.dto.cartitem.ChangeCartItemQuantityDto;
 import mate.academy.onlinebookstore.dto.shoppingcart.ShoppingCartDto;
+import mate.academy.onlinebookstore.repository.shoppingcart.ShoppingCartRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,6 +42,8 @@ class ShoppingCartControllerTest {
     protected static MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ShoppingCartRepository shoppingCartRepository;
 
     @BeforeAll
     static void beforeAll(
@@ -104,7 +107,8 @@ class ShoppingCartControllerTest {
     )
     void addItemToShoppingCart_GivenValidAddBookToShoppingCartDto_ShouldReturnShoppingCartDto()
             throws Exception {
-        String jsonRequest = objectMapper.writeValueAsString(getAddBookToShoppingCartDto());
+        AddBookToShoppingCartDto addBookToShoppingCartDto = getAddBookToShoppingCartDto();
+        String jsonRequest = objectMapper.writeValueAsString(addBookToShoppingCartDto);
         MvcResult mvcResult = mockMvc.perform(
                         post("/api/cart")
                                 .content(jsonRequest)
@@ -221,7 +225,7 @@ class ShoppingCartControllerTest {
                 .setQuantity(RED_BOOK_QUANTITY);
     }
 
-    private Object getAddBookToShoppingCartDto() {
+    private AddBookToShoppingCartDto getAddBookToShoppingCartDto() {
         return new AddBookToShoppingCartDto()
                 .setBookId(1L)
                 .setTitle("Red Book")
