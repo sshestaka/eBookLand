@@ -33,6 +33,7 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -43,9 +44,9 @@ public class CategoryControllerTest {
     public static final String CATEGORY_1 = "Category1";
     public static final String CATEGORY_2 = "Category2";
     public static final String CATEGORY_3 = "Category3";
-    protected static MockMvc mockMvc;
+    private static MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     static void beforeAll(
@@ -80,42 +81,6 @@ public class CategoryControllerTest {
                     new ClassPathResource("database/categories/remove-all-categories.sql")
             );
         }
-    }
-
-    private BookDtoWithoutCategoryIds getRedBookDtoWithPrice19_99() {
-        return new BookDtoWithoutCategoryIds()
-                .setId(1L)
-                .setTitle("Red Book")
-                .setAuthor("Red Author")
-                .setIsbn("Red-ISBN")
-                .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Red description")
-                .setCoverImage("Red cover image");
-
-    }
-
-    private BookDtoWithoutCategoryIds getGreenBookDtoWithPrice19_99() {
-        return new BookDtoWithoutCategoryIds()
-                .setId(2L)
-                .setTitle("Green Book")
-                .setAuthor("Green Author")
-                .setIsbn("Green-ISBN")
-                .setPrice(BigDecimal.valueOf(19.99))
-                .setDescription("Green description")
-                .setCoverImage("Green cover image");
-
-    }
-
-    private BookDtoWithoutCategoryIds getBlackBookDtoWithPrice21_99() {
-        return new BookDtoWithoutCategoryIds()
-                .setId(3L)
-                .setTitle("Black Book")
-                .setAuthor("Black Author")
-                .setIsbn("Black-ISBN")
-                .setPrice(BigDecimal.valueOf(21.99))
-                .setDescription("Black description")
-                .setCoverImage("Black cover image");
-
     }
 
     @Test
@@ -238,22 +203,24 @@ public class CategoryControllerTest {
     @Test
     @DisplayName("Find all books by category id")
     @WithMockUser(username = "user", roles = {"USER"})
-    @Sql(
-            scripts = "classpath:database/books/add-three-default-books.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/categories/add-books-in-books-categories.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/categories/remove-all-from-books-categories.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
-    @Sql(
-            scripts = "classpath:database/books/remove-all-books.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
+    @SqlGroup({
+            @Sql(
+                    scripts = "classpath:database/books/add-three-default-books.sql",
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            ),
+            @Sql(
+                    scripts = "classpath:database/categories/add-books-in-books-categories.sql",
+                    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+            ),
+            @Sql(
+                    scripts = "classpath:database/categories/remove-all-from-books-categories.sql",
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            ),
+            @Sql(
+                    scripts = "classpath:database/books/remove-all-books.sql",
+                    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+            )
+    })
     void getBooksByCategoryId_GivenCategoriesWithBooks_ShouldReturnAllBooksByCategoryId()
             throws Exception {
         List<BookDtoWithoutCategoryIds> expectedListOneBook = new ArrayList<>();
@@ -287,5 +254,41 @@ public class CategoryControllerTest {
         )).toList();
         Assertions.assertEquals(3, actualThreeBooks.size());
         Assertions.assertEquals(expectedListThreeBooks, actualThreeBooks);
+    }
+
+    private BookDtoWithoutCategoryIds getRedBookDtoWithPrice19_99() {
+        return new BookDtoWithoutCategoryIds()
+                .setId(1L)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setIsbn("Red-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Red description")
+                .setCoverImage("Red cover image");
+
+    }
+
+    private BookDtoWithoutCategoryIds getGreenBookDtoWithPrice19_99() {
+        return new BookDtoWithoutCategoryIds()
+                .setId(2L)
+                .setTitle("Green Book")
+                .setAuthor("Green Author")
+                .setIsbn("Green-ISBN")
+                .setPrice(BigDecimal.valueOf(19.99))
+                .setDescription("Green description")
+                .setCoverImage("Green cover image");
+
+    }
+
+    private BookDtoWithoutCategoryIds getBlackBookDtoWithPrice21_99() {
+        return new BookDtoWithoutCategoryIds()
+                .setId(3L)
+                .setTitle("Black Book")
+                .setAuthor("Black Author")
+                .setIsbn("Black-ISBN")
+                .setPrice(BigDecimal.valueOf(21.99))
+                .setDescription("Black description")
+                .setCoverImage("Black cover image");
+
     }
 }

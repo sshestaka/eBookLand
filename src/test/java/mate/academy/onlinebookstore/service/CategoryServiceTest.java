@@ -35,24 +35,15 @@ public class CategoryServiceTest {
     @Test
     @DisplayName("Verify save() method works")
     public void save_ValidCreateCategoryDto_ReturnCategoryDto() {
-        CreateCategoryDto createCategoryDto = new CreateCategoryDto();
-        createCategoryDto.setName("New Test Category");
-        createCategoryDto.setDescription("Test description");
-
-        Category category = new Category();
-        category.setName(createCategoryDto.getName());
-        category.setDescription(createCategoryDto.getDescription());
-
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setName(category.getName());
-        categoryDto.setDescription(categoryDto.getDescription());
+        CreateCategoryDto createCategoryDto = getTestCreateCategoryDto();
+        Category category = getTestCategory(createCategoryDto);
+        CategoryDto categoryDto = getCategoryDto(category);
 
         Mockito.when(categoryMapper.toEntity(createCategoryDto)).thenReturn(category);
         Mockito.when(categoryRepository.save(category)).thenReturn(category);
         Mockito.when(categoryMapper.toDto(category)).thenReturn(categoryDto);
 
         CategoryDto savedCategoryDto = categoryService.save(createCategoryDto);
-
         Assertions.assertEquals(savedCategoryDto, categoryDto);
         Mockito.verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
@@ -60,13 +51,8 @@ public class CategoryServiceTest {
     @Test
     @DisplayName("Verify getAll method works")
     public void getAll_ValidPageable_ReturnAllCategories() {
-        Category category = new Category()
-                .setName("Category1")
-                .setDescription("Category1");
-
-        CategoryDto categoryDto = new CategoryDto()
-                .setName(category.getName())
-                .setDescription(category.getDescription());
+        Category category = getCategory();
+        CategoryDto categoryDto = getCategoryDto(category);
 
         Pageable pageable = PageRequest.of(0, 10);
         List<Category> categories = List.of(category);
@@ -98,5 +84,29 @@ public class CategoryServiceTest {
         String expected = "Can't find a category by id: " + nonExistingCategoryId;
         String actual = exception.getMessage();
         Assertions.assertEquals(expected, actual);
+    }
+
+    private CategoryDto getCategoryDto(Category category) {
+        return new CategoryDto()
+                .setName(category.getName())
+                .setDescription(category.getDescription());
+    }
+
+    private Category getTestCategory(CreateCategoryDto createCategoryDto) {
+        return new Category()
+                .setName(createCategoryDto.getName())
+                .setDescription(createCategoryDto.getDescription());
+    }
+
+    private CreateCategoryDto getTestCreateCategoryDto() {
+        return new CreateCategoryDto()
+                .setName("New Test Category")
+                .setDescription("Test description");
+    }
+
+    private Category getCategory() {
+        return new Category()
+                .setName("Category1")
+                .setDescription("Category1");
     }
 }

@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findById(Long id) {
         return userMapper.toDto(userRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Can't find a book by id: " + id)));
+                new NoSuchElementException("Can't find a user by id: " + id)));
     }
 
     @Override

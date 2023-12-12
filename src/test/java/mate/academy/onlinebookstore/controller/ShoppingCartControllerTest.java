@@ -11,12 +11,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import mate.academy.onlinebookstore.dto.book.AddBookToShoppingCartDto;
 import mate.academy.onlinebookstore.dto.cartitem.CartItemDto;
 import mate.academy.onlinebookstore.dto.cartitem.ChangeCartItemQuantityDto;
 import mate.academy.onlinebookstore.dto.shoppingcart.ShoppingCartDto;
+import mate.academy.onlinebookstore.mapper.IMPL.ShoppingCartMapperImpl;
+import mate.academy.onlinebookstore.repository.shoppingcart.ShoppingCartRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,21 +39,16 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ShoppingCartControllerTest {
-    public static final AddBookToShoppingCartDto ADD_BOOK_TO_SHOPPING_CART_DTO
-            = new AddBookToShoppingCartDto()
-            .setBookId(1L).setTitle("Red Book").setAuthor("Red Author").setQuantity(10);
-    public static final List<CartItemDto> CART_ITEMS = List.of(new CartItemDto()
-            .setId(1L)
-            .setBookId(1L)
-            .setBookTitle("Red Book")
-            .setQuantity(10));
-    public static final ShoppingCartDto SHOPPING_CART_DTO_EXPECTED = new ShoppingCartDto()
-            .setId(1L)
-            .setUserId(1L)
-            .setCartItems(CART_ITEMS);
-    protected static MockMvc mockMvc;
+    public static final int RED_BOOK_QUANTITY = 10;
+    public static final int UPDATED_QUANTITY = 11;
+    private static final long SHOPPING_CART_EXPECTED_ID = 1L;
+    private static MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
+    @Autowired
+    private ShoppingCartRepository shoppingCartRepository;
+    @Autowired
+    private ShoppingCartMapperImpl shoppingCartMapper;
 
     @BeforeAll
     static void beforeAll(
@@ -74,7 +72,9 @@ class ShoppingCartControllerTest {
             );
             ScriptUtils.executeSqlScript(
                     connection,
-                    new ClassPathResource("database/shoppingcarts/add-shopping-cart-user-id-1.sql")
+                    new ClassPathResource(
+                            "database/shoppingcarts/add-shopping-cart-for-users-1-and-2.sql"
+                    )
             );
         }
     }
@@ -112,7 +112,8 @@ class ShoppingCartControllerTest {
     )
     void addItemToShoppingCart_GivenValidAddBookToShoppingCartDto_ShouldReturnShoppingCartDto()
             throws Exception {
-        String jsonRequest = objectMapper.writeValueAsString(ADD_BOOK_TO_SHOPPING_CART_DTO);
+        AddBookToShoppingCartDto addBookToShoppingCartDto = getAddBookToShoppingCartDto();
+        String jsonRequest = objectMapper.writeValueAsString(addBookToShoppingCartDto);
         MvcResult mvcResult = mockMvc.perform(
                         post("/api/cart")
                                 .content(jsonRequest)
@@ -124,8 +125,13 @@ class ShoppingCartControllerTest {
                 mvcResult.getResponse().getContentAsString(),
                 ShoppingCartDto.class
         );
+        ShoppingCartDto expected = shoppingCartMapper.toDto(
+                shoppingCartRepository.findById(SHOPPING_CART_EXPECTED_ID)
+                .orElseThrow(() ->
+                        new NoSuchElementException("Can't find a shopping cart by id "
+                                + SHOPPING_CART_EXPECTED_ID)));
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(SHOPPING_CART_DTO_EXPECTED, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -151,8 +157,9 @@ class ShoppingCartControllerTest {
                 mvcResult.getResponse().getContentAsString(),
                 ShoppingCartDto.class
         );
+        ShoppingCartDto expected = getShoppingCartDto();
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(SHOPPING_CART_DTO_EXPECTED, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -167,9 +174,6 @@ class ShoppingCartControllerTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
     )
     void delete_GivenValidCartItem_ShouldDeleteCartItemFromUserShoppingCart() throws Exception {
-        ShoppingCartDto expectedShoppingCart = new ShoppingCartDto()
-                .setId(1L)
-                .setUserId(1L);
         MvcResult mvcResult = mockMvc.perform(
                         delete("/api/cart/cart-items/1")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,16 +195,14 @@ class ShoppingCartControllerTest {
     )
     void updateQuantityByItemId_GivenValidParameters_ShouldReturnShoppingCartDto()
             throws Exception {
-        List<CartItemDto> redBooks11Pc = List.of(new CartItemDto()
-                .setId(1L)
-                .setBookId(1L)
-                .setBookTitle("Red Book")
-                .setQuantity(11));
+        CartItemDto redBookCartItemDtoWithUpdatedQuantity = getRedBookCartItemDto()
+                .setQuantity(UPDATED_QUANTITY);
         ShoppingCartDto shoppingCartDtoExpected = new ShoppingCartDto()
-                .setId(1L)
-                .setUserId(1L)
-                .setCartItems(redBooks11Pc);
-        ChangeCartItemQuantityDto changeItemsQuantityDto = new ChangeCartItemQuantityDto(11);
+                .setId(SHOPPING_CART_EXPECTED_ID)
+                .setUserId(SHOPPING_CART_EXPECTED_ID)
+                .setCartItems(List.of(redBookCartItemDtoWithUpdatedQuantity));
+        ChangeCartItemQuantityDto changeItemsQuantityDto =
+                new ChangeCartItemQuantityDto(UPDATED_QUANTITY);
         String jsonRequest = objectMapper.writeValueAsString(changeItemsQuantityDto);
         MvcResult mvcResult = mockMvc.perform(
                         patch("/api/cart/cart-items/1")
@@ -215,5 +217,28 @@ class ShoppingCartControllerTest {
         );
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(shoppingCartDtoExpected, actual);
+    }
+
+    private ShoppingCartDto getShoppingCartDto() {
+        return new ShoppingCartDto()
+                .setId(SHOPPING_CART_EXPECTED_ID)
+                .setUserId(SHOPPING_CART_EXPECTED_ID)
+                .setCartItems(List.of(getRedBookCartItemDto()));
+    }
+
+    private CartItemDto getRedBookCartItemDto() {
+        return new CartItemDto()
+                .setId(SHOPPING_CART_EXPECTED_ID)
+                .setBookId(SHOPPING_CART_EXPECTED_ID)
+                .setBookTitle("Red Book")
+                .setQuantity(RED_BOOK_QUANTITY);
+    }
+
+    private AddBookToShoppingCartDto getAddBookToShoppingCartDto() {
+        return new AddBookToShoppingCartDto()
+                .setBookId(SHOPPING_CART_EXPECTED_ID)
+                .setTitle("Red Book")
+                .setAuthor("Red Author")
+                .setQuantity(RED_BOOK_QUANTITY);
     }
 }
