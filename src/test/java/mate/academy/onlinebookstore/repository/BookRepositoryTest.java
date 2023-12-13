@@ -1,16 +1,22 @@
 package mate.academy.onlinebookstore.repository;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 import mate.academy.onlinebookstore.model.Book;
 import mate.academy.onlinebookstore.repository.book.BookRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
@@ -18,6 +24,19 @@ import org.springframework.test.context.jdbc.Sql;
 public class BookRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
+
+    @BeforeAll
+    static void beforeAll(@Autowired DataSource dataSource) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            ScriptUtils.executeSqlScript(
+                    connection,
+                    new ClassPathResource(
+                            "database/remove-all-data-before-tests/remove-all-data-before-tests.sql"
+                    )
+            );
+        }
+    }
 
     @Test
     @DisplayName("Find all books by category id")

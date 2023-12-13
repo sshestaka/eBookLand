@@ -1,14 +1,20 @@
 package mate.academy.onlinebookstore.repository;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.NoSuchElementException;
+import javax.sql.DataSource;
 import mate.academy.onlinebookstore.model.ShoppingCart;
 import mate.academy.onlinebookstore.repository.shoppingcart.ShoppingCartRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
@@ -19,6 +25,19 @@ public class ShoppingCartRepositoryTest {
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
+
+    @BeforeAll
+    static void beforeAll(@Autowired DataSource dataSource) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(true);
+            ScriptUtils.executeSqlScript(
+                    connection,
+                    new ClassPathResource(
+                            "database/remove-all-data-before-tests/remove-all-data-before-tests.sql"
+                    )
+            );
+        }
+    }
 
     @Test
     @DisplayName("Check find by user id method")

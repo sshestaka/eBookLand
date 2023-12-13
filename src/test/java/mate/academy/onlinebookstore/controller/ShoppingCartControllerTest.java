@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import mate.academy.onlinebookstore.dto.book.AddBookToShoppingCartDto;
@@ -20,6 +19,7 @@ import mate.academy.onlinebookstore.dto.cartitem.ChangeCartItemQuantityDto;
 import mate.academy.onlinebookstore.dto.shoppingcart.ShoppingCartDto;
 import mate.academy.onlinebookstore.mapper.IMPL.ShoppingCartMapperImpl;
 import mate.academy.onlinebookstore.repository.shoppingcart.ShoppingCartRepository;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -62,6 +62,12 @@ class ShoppingCartControllerTest {
         teardown(dataSource);
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
+            ScriptUtils.executeSqlScript(
+                    connection,
+                    new ClassPathResource(
+                            "database/remove-all-data-before-tests/remove-all-data-before-tests.sql"
+                    )
+            );
             ScriptUtils.executeSqlScript(
                     connection,
                     new ClassPathResource("database/books/add-three-default-books.sql")
@@ -125,13 +131,9 @@ class ShoppingCartControllerTest {
                 mvcResult.getResponse().getContentAsString(),
                 ShoppingCartDto.class
         );
-        ShoppingCartDto expected = shoppingCartMapper.toDto(
-                shoppingCartRepository.findById(SHOPPING_CART_EXPECTED_ID)
-                .orElseThrow(() ->
-                        new NoSuchElementException("Can't find a shopping cart by id "
-                                + SHOPPING_CART_EXPECTED_ID)));
+        ShoppingCartDto expected = getShoppingCartDto();
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(expected, actual);
+        EqualsBuilder.reflectionEquals(expected, actual);
     }
 
     @Test

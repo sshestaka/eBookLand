@@ -62,6 +62,12 @@ public class CategoryControllerTest {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
                     connection,
+                    new ClassPathResource(
+                            "database/remove-all-data-before-tests/remove-all-data-before-tests.sql"
+                    )
+            );
+            ScriptUtils.executeSqlScript(
+                    connection,
                     new ClassPathResource("database/categories/add-three-default-categories.sql")
             );
         }

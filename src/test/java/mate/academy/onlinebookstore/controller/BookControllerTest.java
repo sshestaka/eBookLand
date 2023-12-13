@@ -59,6 +59,12 @@ class BookControllerTest {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
                     connection,
+                    new ClassPathResource(
+                            "database/remove-all-data-before-tests/remove-all-data-before-tests.sql"
+                    )
+            );
+            ScriptUtils.executeSqlScript(
+                    connection,
                     new ClassPathResource("database/books/add-three-default-books.sql")
             );
         }
