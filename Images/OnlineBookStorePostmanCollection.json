@@ -1,0 +1,794 @@
+{
+	"info": {
+		"_postman_id": "50725349-c4e8-456d-aa6c-fa744c40eedf",
+		"name": "My Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30151017",
+		"_collection_link": "https://planetary-meteor-338560.postman.co/workspace/New-Team-Workspace~f69544d7-47fa-4809-97f3-bd0f4e85d371/collection/30151017-50725349-c4e8-456d-aa6c-fa744c40eedf?action=share&source=collection_link&creator=30151017"
+	},
+	"item": [
+		{
+			"name": "REGISTER-USER",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"new@gmail.com\",\r\n    \"password\": \"1234\",\r\n    \"repeatPassword\": \"1234\",\r\n    \"firstName\": \"new\",\r\n    \"lastName\": \"Sh\",\r\n    \"shippingAddress\": \"Earth\",\r\n    \"roles\": \"USER\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/auth/register"
+			},
+			"response": []
+		},
+		{
+			"name": "LOGIN",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "1234",
+						"username": "serg@gmail.com"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"sergey@gmail.com\",\r\n    \"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "ADD-BOOK",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "12345678",
+						"username": "serg@gmail.com"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Treasure Island\",\r\n    \"author\": \"Robert Louis Stevenson\",\r\n    \"isbn\": \"TI-RLS-0981\",\r\n    \"price\": 999.00,\r\n    \"description\": \"The book about Pirates\",\r\n    \"coverImage\": \"cover image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/books"
+			},
+			"response": []
+		},
+		{
+			"name": "ADD-ITEM-TO-SHOPPINCART",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "12345678",
+						"username": "serg@gmail.com"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Treasure Island\",\r\n    \"author\": \"Robert Louis Stevenson\",\r\n    \"isbn\": \"TI-RLS-0981\",\r\n    \"price\": 999.00,\r\n    \"description\": \"The book about Pirates\",\r\n    \"coverImage\": \"cover image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/books"
+			},
+			"response": []
+		},
+		{
+			"name": "ADD-ORDER",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "12345678",
+						"username": "serg@gmail.com"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Treasure Island\",\r\n    \"author\": \"Robert Louis Stevenson\",\r\n    \"isbn\": \"TI-RLS-0981\",\r\n    \"price\": 999.00,\r\n    \"description\": \"The book about Pirates\",\r\n    \"coverImage\": \"cover image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/books"
+			},
+			"response": []
+		},
+		{
+			"name": "CHANGE-ITEM-QUANTITY",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "12345678",
+						"username": "serg@gmail.com"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Treasure Island\",\r\n    \"author\": \"Robert Louis Stevenson\",\r\n    \"isbn\": \"TI-RLS-0981\",\r\n    \"price\": 999.00,\r\n    \"description\": \"The book about Pirates\",\r\n    \"coverImage\": \"cover image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/cart/cart-items/"
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE-ORDER-STATUS",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "12345678",
+						"username": "serg@gmail.com"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Treasure Island\",\r\n    \"author\": \"Robert Louis Stevenson\",\r\n    \"isbn\": \"TI-RLS-0981\",\r\n    \"price\": 999.00,\r\n    \"description\": \"The book about Pirates\",\r\n    \"coverImage\": \"cover image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/cart/cart-items/"
+			},
+			"response": []
+		},
+		{
+			"name": "ADD-CATEGORY",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"password": "12345678",
+						"username": "serg@gmail.com"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Treasure Island\",\r\n    \"author\": \"Robert Louis Stevenson\",\r\n    \"isbn\": \"TI-RLS-0981\",\r\n    \"price\": 999.00,\r\n    \"description\": \"The book about Pirates\",\r\n    \"coverImage\": \"cover image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/books"
+			},
+			"response": []
+		},
+		{
+			"name": "GET-ALL-BOOKS",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "serg@gamil.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "author,DESC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET-USER'S-SHOPPING-CART",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZXJnZXlAZ21haWwuY29tIiwiaWF0IjoxNzAyODM2OTgzLCJleHAiOjE3MDI4Mzk5ODN9.pRIHK5UCqJBpz_dZkKsHEuN97_MOuEnBTWBwh9YhbD1N5BlKGtlP7SHvMuLDfoFNuQCEc_QX_Gye3T3WQZvBVg"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "author,DESC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET-ALL-CATEGORIES",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "serg@gamil.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "author,DESC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET-ALL-ORDERS",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "serg@gamil.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "author,DESC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET-ALL-ORDER'S-ITEMS",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "serg@gamil.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "author,DESC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET-ORDER-ITEM",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "serg@gamil.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "author,DESC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET-BOOK-BY-ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "new@gmail.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "GET-CATEGORY-BY-ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "new@gmail.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "GET-BOOKS-BY-CATEGORIES-ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "new@gmail.com",
+						"password": "12345678"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/auth/login"
+			},
+			"response": []
+		},
+		{
+			"name": "SEARCH-BOOK",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/books/3"
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE-BOOK",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE2OTg1MTg4NDYsImV4cCI6MTY5ODUyMTg0Nn0.Eo6Vr7PJE47Y4ggbI6q6hxFOi0rV-73_nU1ARdEiucDxzyXmdjkZSxoaHkYc6a6KUiVTVmP1de6TLOozTIxWSA"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"price\": 1700\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/books/1"
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE-CATEGORY",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE2OTg1MTg4NDYsImV4cCI6MTY5ODUyMTg0Nn0.Eo6Vr7PJE47Y4ggbI6q6hxFOi0rV-73_nU1ARdEiucDxzyXmdjkZSxoaHkYc6a6KUiVTVmP1de6TLOozTIxWSA"
+					}
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"price\": 1700\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/books/1"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE-BOOK-BY-ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/books/3"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE-CART-ITEM-ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/books/3"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE-CATEGORY-BY-ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/books/3"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE-USER-BY-ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/api/books/3"
+			},
+			"response": []
+		}
+	]
+}
